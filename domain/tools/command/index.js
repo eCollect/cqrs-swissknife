@@ -1,6 +1,8 @@
 'use strict';
 
-const settings = obj => ({ settings: obj });
+const settings = require('../../../shared/settings');
+const sharedOnly = require('../../../shared/settings');
+
 const preLoadCondition = (condition) => {
 	if (typeof condition !== 'function')
 		throw new Error('Condition is missing.');
@@ -22,12 +24,8 @@ const preCondition = (condition) => {
 };
 
 const only = {
-	ifExists() {
-		return settings({ existing: true });
-	},
-	ifNotExists() {
-		return settings({ existing: false });
-	},
+	ifExists: sharedOnly.ifExists,
+	ifNotExists: sharedOnly.ifNotExists,
 	ifValidatedBy(schema) {
 		// no schema provided
 		if (!schema)

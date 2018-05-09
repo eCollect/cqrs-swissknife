@@ -1,6 +1,6 @@
 'use strict';
 
-const settings = obj => ({ settings: obj });
+const settings = require('../../../shared/settings');
 
 module.exports = {
 	settings,
