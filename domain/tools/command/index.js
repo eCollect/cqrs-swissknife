@@ -8,7 +8,7 @@ const preLoadCondition = (condition) => {
 		throw new Error('Condition is missing.');
 	return {
 		preLoadCondition(command, callback) {
-			Promise.resolve(condition(command)).then(callback).catch(e => callback(e));
+			Promise.resolve(condition(command)).then(e => callback(null, e)).catch(e => callback(e));
 		},
 	};
 };
@@ -18,7 +18,7 @@ const preCondition = (condition) => {
 
 	return {
 		preCondition(command, aggregate, callback) {
-			Promise.resolve(condition(command, aggregate)).then(callback).catch(e => callback(e));
+			Promise.resolve(condition(command, aggregate)).then(e => callback(null, e)).catch(e => callback(e));
 		},
 	};
 };
