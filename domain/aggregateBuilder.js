@@ -32,7 +32,7 @@ module.exports = (context, aggregateName, { commands = {}, events = {}, idGenera
 	});
 
 	if (idGenerator)
-		aggregate.defineCommandAwareAggregateIdGenerator((cmd, callback) => Promise.resolve(idGenerator).then(id => callback(null, id).catch(e => callback(e))));
+		aggregate.defineCommandAwareAggregateIdGenerator((cmd, callback) => Promise.resolve(idGenerator(cmd)).then(id => callback(null, id)).catch(e => callback(e)));
 
 	context.addAggregate(aggregate);
 	aggregate.context = contextName;
