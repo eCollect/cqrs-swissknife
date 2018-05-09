@@ -1,0 +1,4 @@
+{
+	"typescript.autoImportSuggestions.enabled": false,
+	"prettier.eslintIntegration": true
+}
