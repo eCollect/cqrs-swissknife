@@ -23,10 +23,10 @@ const preCondition = (condition) => {
 
 const only = {
 	ifExists() {
-		return settings({ exists: true });
+		return settings({ existing: true });
 	},
 	ifNotExists() {
-		return { settings: { exists: false } };
+		return settings({ existing: false });
 	},
 	ifValidatedBy(schema) {
 		// no schema provided
