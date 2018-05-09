@@ -8,11 +8,11 @@ const only = {
 	ifNotExists: sharedOnly.ifNotExists,
 };
 
-const identifier = (identifierFunciton) => {
-	if (!identifierFunciton || (typeof identifierFunciton !== 'function' && typeof identifierFunciton !== 'string'))
+const identifier = (identifierFunction) => {
+	if (!identifierFunction || (typeof identifierFunciton !== 'function' && typeof identifierFunction !== 'string'))
 		throw new Error('No identifier valid supplied!');
 
-	return { useAsId: identifierFunciton };
+	return { useAsId: identifierFunction };
 };
 
 module.exports = {

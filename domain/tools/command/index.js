@@ -7,8 +7,8 @@ const preLoadCondition = (condition) => {
 	if (typeof condition !== 'function')
 		throw new Error('Condition is missing.');
 	return {
-		preLoadCondition(command, callback) {
-			Promise.resolve(condition(command)).then(e => callback(null, e)).catch(e => callback(e));
+		async preLoadCondition(command) {
+			await Promise.resolve(condition(command));
 		},
 	};
 };
@@ -17,8 +17,8 @@ const preCondition = (condition) => {
 		throw new Error('Condition is missing or not a function.');
 
 	return {
-		preCondition(command, aggregate, callback) {
-			Promise.resolve(condition(command, aggregate)).then(e => callback(null, e)).catch(e => callback(e));
+		async preCondition(command, aggregate) {
+			await Promise.resolve(condition(command, aggregate));
 		},
 	};
 };
@@ -31,7 +31,7 @@ const only = {
 		if (!schema)
 			throw new Error('Schema is missing.');
 
-		// validation funciton, ie. pre-load-condition
+		// validation function, ie. pre-load-condition
 		if (typeof schema === 'function')
 			return preLoadCondition(schema);
 
