@@ -21,7 +21,7 @@ const itemFactory = (contextName, aggregateName, definition) => {
 	return definition;
 };
 
-module.exports = (context, aggregateName, { commands = {}, events = {} }) => {
+module.exports = (context, aggregateName, { commands = {}, events = {}, idGenerator }) => {
 	const contextName = context.name;
 
 	const aggregate = defineAggregate({
@@ -30,6 +30,9 @@ module.exports = (context, aggregateName, { commands = {}, events = {} }) => {
 		defaultEventPayload: '',
 		defaultPreConditionPayload: '',
 	});
+
+	if (idGenerator)
+		aggregate.defineCommandAwareAggregateIdGenerator((cmd, callback) => Promise.resolve(idGenerator).then(id => callback(null, id).catch(e => callback(e))));
 
 	context.addAggregate(aggregate);
 	aggregate.context = contextName;
