@@ -20,10 +20,8 @@ module.exports = ({ reactions, identity = {} }) => {
 			aggregate,
 		};
 
-
 		if (!Array.isArray(reaction))
 			reaction = [reaction];
-
 
 		reaction.forEach((item) => {
 			if (item.settings)

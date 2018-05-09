@@ -1,7 +1,7 @@
 'use strict';
 
 const settings = require('../../shared/settings');
-const sharedOnly = require('../../../shared/settings');
+const sharedOnly = require('../../shared/only');
 
 const only = {
 	ifExists: sharedOnly.ifExists,
