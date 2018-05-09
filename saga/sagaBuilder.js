@@ -43,7 +43,8 @@ module.exports = ({ reactions, identity = {} }) => {
 		if (!sagaFunction)
 			throw new Error('No saga function specified');
 
-		const sagaDefinition = defineSaga(sagaSettings, sagaFunction);
+		// TODO Error handling
+		const sagaDefinition = defineSaga(sagaSettings, (event, saga, callback) => Promise.resolve(sagaFunction(event, saga)).then(() => saga.commit(callback)));
 
 		if (identifier)
 			sagaDefinition.useAsId(identifier);
