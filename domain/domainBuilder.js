@@ -20,7 +20,7 @@ const loadAggregates = (contextDirectory, context) => {
 
 		if (path.extname(aggregateFile) !== '.js') return;
 
-		aggregateFactory(context, aggregateName, require(aggregateFile)); // eslint-disable-line
+		aggregateFactory(context, path.basename(aggregateName, '.js'), require(aggregateFile)); // eslint-disable-line
 	});
 
 	return context;
