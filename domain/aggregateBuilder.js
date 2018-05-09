@@ -67,14 +67,14 @@ module.exports = (context, aggregateName, { commands = {}, events = {}, idGenera
 				return preLoadConditions.push(itemFactory(
 					contextName,
 					aggregateName,
-					definePreLoadCondition({ name: [commandName], priority }, item.preLoadCondition),
+					definePreLoadCondition({ name: [commandName], priority }, (cmd, callback) => Promise.resolve(item.preLoadCondition(cmd)).then(r => callback(null, r)).catch(e => callback(e))),
 				));
 
 			if (item.preCondition)
 				return preConditions.push(itemFactory(
 					contextName,
 					aggregateName,
-					definePreCondition({ name: [commandName], priority }, item.preCondition),
+					definePreCondition({ name: [commandName], priority }, (cmd, agg, callback) => Promise.resolve(item.preCondition(cmd, agg)).then(r => callback(null, r)).catch(e => callback(e))),
 				));
 
 			return null;
