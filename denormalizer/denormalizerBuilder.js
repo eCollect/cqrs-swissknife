@@ -8,7 +8,7 @@ const {
 } = require('cqrs-eventdenormalizer');
 
 module.exports = (collectionName, {
-	eventExtenderModels = {}, preEventExtenderModels = {}, viewBuilderModels = {}, repositorySettings = {},
+	reactions = {}, repositorySettings = {}, identity = {},
 }) => {
 	const collection = defineCollection({
 		name: collectionName,
@@ -16,85 +16,77 @@ module.exports = (collectionName, {
 		repositorySettings,
 	});
 
-	// define preEventExtenders
-	Object.entries(preEventExtenderModels).forEach(([extenderName, extender]) => {
-		const [context, aggregate, name, id] = extenderName.split('|');
-
-		const extenderSettings = {
-			name,
-			context,
-			aggregate,
-			id,
-		};
-
-		if (!Array.isArray(extender))
-			extender = [extender];
-
-		return extender.forEach((item) => {
-			// command
-			if (typeof item === 'function')
-				return collection.addPreEventExtender(definePreEventExtender(extenderSettings, item));
-
-			// settings ( exists ? )
-			if (item.settings)
-				return Object.assign(extenderSettings, item.settings);
-
-			return null;
-		});
-	});
-
-	// define eventExtenders
-	Object.entries(eventExtenderModels).forEach(([extenderName, extender]) => {
-		const [context, aggregate, name, id] = extenderName.split('|');
-
-		const extenderSettings = {
-			name,
-			context,
-			aggregate,
-			id,
-		};
-
-		if (!Array.isArray(extender))
-			extender = [extender];
-
-		return extender.forEach((item) => {
-			// command
-			if (typeof item === 'function')
-				return collection.addEventExtender(defineEventExtender(extenderSettings, item));
-
-			// settings ( exists ? )
-			if (item.settings)
-				return Object.assign(extenderSettings, item.settings);
-
-			return null;
-		});
-	});
-
 	// define viewModels
-	Object.entries(viewBuilderModels).forEach(([modelName, model]) => {
-		const [context, aggregate, name, id] = modelName.split('|');
+	Object.entries(reactions).forEach(([eventFullName, model]) => {
+		const [context, aggregate, name] = eventFullName.split('.');
+
+		let identifier = identity[eventFullName];
+		let viewModelFunction;
+		let eventExtender;
+		let preEventExtender;
 
 		const modelSettings = {
 			name,
 			context,
 			aggregate,
-			id,
 		};
 
 		if (!Array.isArray(model))
 			model = [model];
 
-		return model.forEach((item) => {
+		model.forEach((item) => {
 			// command
-			if (typeof item === 'function')
-				return collection.addViewBuilder(defineViewBuilder(modelSettings, (event, vm, callback) => Promise.resolve(item(event, vm)).then(() => vm.commit(callback))));
+			if (typeof item === 'function') {
+				viewModelFunction = (event, vm, callback) => Promise.resolve(item(event, vm)).then(() => vm.commit(callback));
+				return;
+			}
+
+			if (item.eventExtender) {
+				if (eventExtender)
+					throw new Error('Only one event extender can be defined per event');
+				eventExtender = (event, vm, callback) => Promise.resolve(item.eventExtender(event, vm)).then(e => callback(null, e)).catch(e => callback(e));
+				return;
+			}
+
+			if (item.preEventExtender) {
+				if (preEventExtender)
+					throw new Error('Only one event extender can be defined per event');
+				preEventExtender = (event, col, callback) => Promise.resolve(item.preEventExtender(event, col)).then(e => callback(null, e)).catch(e => callback(e));
+				return;
+			}
+
+			if (item.useAsId) {
+				identifier = item.useAsId;
+				return;
+			}
 
 			// settings ( exists ? )
 			if (item.settings)
-				return Object.assign(modelSettings, item.settings);
-
-			return null;
+				Object.assign(modelSettings, item.settings);
 		});
+
+		if (!viewModelFunction)
+			throw new Error(`No view model function specified for event ${eventFullName}`);
+
+		if (!identifier)
+			throw new Error(`No identity specified for event ${eventFullName}`);
+
+		collection.addViewModel(defineViewBuilder(
+			modelSettings,
+			viewModelFunction,
+		));
+
+		if (eventExtender)
+			collection.addEventExtender(defineEventExtender(
+				modelSettings,
+				eventExtender,
+			));
+
+		if (preEventExtender)
+			collection.addPreEventExtender(definePreEventExtender(
+				modelSettings,
+				preEventExtender,
+			));
 	});
 
 	return collection;

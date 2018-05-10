@@ -7,8 +7,8 @@ const preLoadCondition = (condition) => {
 	if (typeof condition !== 'function')
 		throw new Error('Condition is missing.');
 	return {
-		async preLoadCondition(command) {
-			await Promise.resolve(condition(command));
+		preLoadCondition(command) {
+			return Promise.resolve(condition(command));
 		},
 	};
 };
@@ -17,11 +17,12 @@ const preCondition = (condition) => {
 		throw new Error('Condition is missing or not a function.');
 
 	return {
-		async preCondition(command, aggregate) {
-			await Promise.resolve(condition(command, aggregate));
+		preCondition(command, aggregate) {
+			return Promise.resolve(condition(command, aggregate));
 		},
 	};
 };
+
 
 const only = {
 	ifExists: sharedOnly.ifExists,

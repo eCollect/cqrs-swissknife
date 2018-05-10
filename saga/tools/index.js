@@ -18,5 +18,6 @@ const identifier = (identifierFunction) => {
 module.exports = {
 	settings,
 	only,
+
 	identifier,
 };
