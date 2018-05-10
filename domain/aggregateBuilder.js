@@ -8,7 +8,6 @@ const {
 	defineEvent,
 } = require('cqrs-domain');
 
-
 const addCommandToAggregate = (preLoadConditions, preConditions, aggregate, command) => {
 	aggregate.addCommand(command);
 	preLoadConditions.forEach(cnd => command.addPreLoadCondition(cnd));
@@ -17,7 +16,9 @@ const addCommandToAggregate = (preLoadConditions, preConditions, aggregate, comm
 
 const itemFactory = (contextName, aggregateName, definition) => definition;
 
-module.exports = (context, aggregateName, { commandModels = {}, eventModels = {}, idGenerator }) => {
+module.exports = (context, aggregateName, {
+	commandModels = {}, eventModels = {}, initialState = {}, idGenerator,
+}) => {
 	const contextName = context.name;
 
 	const aggregate = defineAggregate({
@@ -25,7 +26,7 @@ module.exports = (context, aggregateName, { commandModels = {}, eventModels = {}
 		defaultCommandPayload: '',
 		defaultEventPayload: '',
 		defaultPreConditionPayload: '',
-	});
+	}, { ...initialState });
 
 	if (idGenerator)
 		aggregate.defineCommandAwareAggregateIdGenerator((cmd, callback) => Promise.resolve(idGenerator(cmd)).then(id => callback(null, id)).catch(e => callback(e)));
