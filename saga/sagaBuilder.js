@@ -5,10 +5,10 @@ const {
 } = require('cqrs-saga');
 
 
-module.exports = ({ reactions, identity = {} }) => {
+module.exports = ({ sagaModels, identity = {} }) => {
 	const sagas = [];
 
-	Object.entries(reactions).forEach(([fullName, reaction]) => {
+	Object.entries(sagaModels).forEach(([fullName, reaction]) => {
 		const [context, aggregate, name] = fullName.split('.');
 
 		let identifier = identity[fullName];

@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="41bf6e1f-8225-46f6-9af2-f59725c9b141" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/denormalizer/denormalizerBuilder.js" beforeDir="false" afterPath="$PROJECT_DIR$/denormalizer/denormalizerBuilder.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/domain/aggregateBuilder.js" beforeDir="false" afterPath="$PROJECT_DIR$/domain/aggregateBuilder.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saga/sagaBuilder.js" beforeDir="false" afterPath="$PROJECT_DIR$/saga/sagaBuilder.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -17,16 +20,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/denormalizer/tools/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="denormalizerBuilder.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="denormalizerBuilder.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/denormalizer/denormalizerBuilder.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="120">
@@ -67,11 +61,38 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="true">
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="21" lean-forward="true" selection-start-line="4" selection-start-column="21" selection-end-line="4" selection-end-column="21" />
+            <state relative-caret-position="45">
+              <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sagaBuilder.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/saga/sagaBuilder.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/saga/tools/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sagaLoader.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/saga/sagaLoader.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="24" column="16" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -103,17 +124,17 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/domain/tools/command/tools.js" />
-        <option value="$PROJECT_DIR$/saga/sagaBuilder.js" />
         <option value="$PROJECT_DIR$/domain/tools/command/index.js" />
         <option value="$PROJECT_DIR$/saga/tools/index.js" />
         <option value="$PROJECT_DIR$/denormalizer/sagaLoader.js" />
         <option value="$PROJECT_DIR$/denormalizer/aggregateBuilder.js" />
         <option value="$PROJECT_DIR$/denormalizer/denormalizerLoader.js" />
         <option value="$PROJECT_DIR$/shared/only.js" />
-        <option value="$PROJECT_DIR$/denormalizer/denormalizerBuilder.js" />
         <option value="$PROJECT_DIR$/denormalizer/tools/index.js" />
         <option value="$PROJECT_DIR$/domain/aggregateBuilder.js" />
         <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/saga/sagaBuilder.js" />
+        <option value="$PROJECT_DIR$/denormalizer/denormalizerBuilder.js" />
       </list>
     </option>
   </component>
@@ -198,6 +219,17 @@
               <item name="tools" type="462c0819:PsiDirectoryNode" />
               <item name="event" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="cqrs-swissknife" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cqrs-swissknife" type="462c0819:PsiDirectoryNode" />
+              <item name="saga" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cqrs-swissknife" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cqrs-swissknife" type="462c0819:PsiDirectoryNode" />
+              <item name="saga" type="462c0819:PsiDirectoryNode" />
+              <item name="tools" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -245,12 +277,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1525858212887</updated>
-      <workItem from="1525858214748" duration="17546000" />
+      <workItem from="1525858214748" duration="17675000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17546000" />
+    <option name="totallyTimeSpent" value="17675000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="2560" height="1417" extended-state="0" />
@@ -262,7 +294,7 @@
       <window_info anchor="bottom" id="Version Control" weight="0.32938564" />
       <window_info id="npm" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Terminal" weight="0.32938564" />
+      <window_info anchor="bottom" id="Terminal" visible="true" weight="0.32938564" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24970461" />
       <window_info anchor="bottom" id="Statistic" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
@@ -327,45 +359,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/saga/tools/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saga/sagaLoader.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="16" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saga/sagaBuilder.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="44" column="111" selection-start-line="44" selection-start-column="99" selection-end-line="44" selection-end-column="111" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/denormalizer/tools/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/denormalizer/denormalizerLoader.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/denormalizer/denormalizerBuilder.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>
@@ -395,8 +392,43 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="21" lean-forward="true" selection-start-line="4" selection-start-column="21" selection-end-line="4" selection-end-column="21" />
+        <state relative-caret-position="45">
+          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saga/tools/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="9" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saga/sagaLoader.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="16" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saga/sagaBuilder.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/denormalizer/denormalizerLoader.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/denormalizer/denormalizerBuilder.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>

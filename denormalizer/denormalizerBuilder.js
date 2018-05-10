@@ -8,7 +8,7 @@ const {
 } = require('cqrs-eventdenormalizer');
 
 module.exports = (collectionName, {
-	eventExtenders = {}, preEventExtenders = {}, viewBuilders = {}, repositorySettings = {},
+	eventExtenderModels = {}, preEventExtenderModels = {}, viewBuilderModels = {}, repositorySettings = {},
 }) => {
 	const collection = defineCollection({
 		name: collectionName,
@@ -17,7 +17,7 @@ module.exports = (collectionName, {
 	});
 
 	// define preEventExtenders
-	Object.entries(preEventExtenders).forEach(([extenderName, extender]) => {
+	Object.entries(preEventExtenderModels).forEach(([extenderName, extender]) => {
 		const [context, aggregate, name, id] = extenderName.split('|');
 
 		const extenderSettings = {
@@ -44,7 +44,7 @@ module.exports = (collectionName, {
 	});
 
 	// define eventExtenders
-	Object.entries(eventExtenders).forEach(([extenderName, extender]) => {
+	Object.entries(eventExtenderModels).forEach(([extenderName, extender]) => {
 		const [context, aggregate, name, id] = extenderName.split('|');
 
 		const extenderSettings = {
@@ -71,7 +71,7 @@ module.exports = (collectionName, {
 	});
 
 	// define viewModels
-	Object.entries(viewBuilders).forEach(([modelName, model]) => {
+	Object.entries(viewBuilderModels).forEach(([modelName, model]) => {
 		const [context, aggregate, name, id] = modelName.split('|');
 
 		const modelSettings = {
