@@ -6,21 +6,15 @@ const sharedOnly = require('../../../shared/only');
 const preLoadCondition = (condition) => {
 	if (typeof condition !== 'function')
 		throw new Error('Condition is missing.');
-	return {
-		preLoadCondition(command) {
-			return Promise.resolve(condition(command));
-		},
-	};
+
+	return { preLoadCondition: condition };
 };
+
 const preCondition = (condition) => {
 	if (!condition || typeof condition !== 'function')
 		throw new Error('Condition is missing or not a function.');
 
-	return {
-		preCondition(command, aggregate) {
-			return Promise.resolve(condition(command, aggregate));
-		},
-	};
+	return { preCondition: condition };
 };
 
 

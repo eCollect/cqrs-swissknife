@@ -4,6 +4,7 @@ const {
 	defineSaga,
 } = require('cqrs-saga');
 
+const { asyncParamCallback } = require('../utils/index');
 
 module.exports = ({ reactions = {}, identity = {} }) => {
 	const sagas = [];
@@ -45,7 +46,7 @@ module.exports = ({ reactions = {}, identity = {} }) => {
 		const sagaDefinition = defineSaga(sagaSettings, (event, saga, callback) => Promise.resolve(sagaFunction(event, saga)).then(() => saga.commit(callback)));
 
 		if (identifier)
-			sagaDefinition.useAsId(identifier);
+			sagaDefinition.useAsId(asyncParamCallback(identifier));
 
 		sagas.push(sagaDefinition);
 	});

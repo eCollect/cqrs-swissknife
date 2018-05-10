@@ -7,6 +7,8 @@ const {
 	defineViewBuilder,
 } = require('cqrs-eventdenormalizer');
 
+const { asyncParamCallback } = require('../utils');
+
 module.exports = (collectionName, {
 	reactions = {}, repositorySettings = {}, identity = {},
 }) => {
@@ -22,8 +24,8 @@ module.exports = (collectionName, {
 
 		let identifier = identity[eventFullName];
 		let viewModelFunction;
-		let eventExtender;
-		let preEventExtender;
+		let eventExtenderFunction;
+		let preEventExtenderFunction;
 
 		const modelSettings = {
 			name,
@@ -42,16 +44,16 @@ module.exports = (collectionName, {
 			}
 
 			if (item.eventExtender) {
-				if (eventExtender)
+				if (eventExtenderFunction)
 					throw new Error('Only one event extender can be defined per event');
-				eventExtender = (event, vm, callback) => Promise.resolve(item.eventExtender(event, vm)).then(e => callback(null, e)).catch(e => callback(e));
+				eventExtenderFunction = asyncParamCallback(item.eventExtender, 'item', 'vm');
 				return;
 			}
 
 			if (item.preEventExtender) {
-				if (preEventExtender)
+				if (preEventExtenderFunction)
 					throw new Error('Only one event extender can be defined per event');
-				preEventExtender = (event, col, callback) => Promise.resolve(item.preEventExtender(event, col)).then(e => callback(null, e)).catch(e => callback(e));
+				preEventExtenderFunction = asyncParamCallback(item.preEventExtender, 'event', 'collection');
 				return;
 			}
 
@@ -71,22 +73,42 @@ module.exports = (collectionName, {
 		if (!identifier)
 			throw new Error(`No identity specified for event ${eventFullName}`);
 
-		collection.addViewModel(defineViewBuilder(
+		if (typeof identifier === 'string')
+			modelSettings.id = identifier;
+
+		const viewModel = defineViewBuilder(
 			modelSettings,
 			viewModelFunction,
-		));
+		);
 
-		if (eventExtender)
-			collection.addEventExtender(defineEventExtender(
+		let preEventExtender;
+
+		if (preEventExtenderFunction)
+			preEventExtender = definePreEventExtender(
 				modelSettings,
-				eventExtender,
-			));
+				preEventExtenderFunction,
+			);
+
+		let eventExtender;
+
+		if (eventExtenderFunction)
+			eventExtender = defineEventExtender(
+				modelSettings,
+				eventExtenderFunction,
+			);
+
+		if (typeof identifier === 'function') {
+			viewModel.useAsId(identifier);
+			if (eventExtender)
+				eventExtender.useAsId(identifier);
+		}
+
+		collection.addViewModel(viewModel);
+		if (eventExtender)
+			collection.addeventExtender(eventExtender);
 
 		if (preEventExtender)
-			collection.addPreEventExtender(definePreEventExtender(
-				modelSettings,
-				preEventExtender,
-			));
+			collection.addeventExtender(preEventExtender);
 	});
 
 	return collection;
