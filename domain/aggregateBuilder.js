@@ -17,7 +17,7 @@ const addCommandToAggregate = (preLoadConditions, preConditions, aggregate, comm
 
 const itemFactory = (contextName, aggregateName, definition) => definition;
 
-module.exports = (context, aggregateName, { commands = {}, events = {}, idGenerator }) => {
+module.exports = (context, aggregateName, { commandModels = {}, eventModels = {}, idGenerator }) => {
 	const contextName = context.name;
 
 	const aggregate = defineAggregate({
@@ -32,8 +32,8 @@ module.exports = (context, aggregateName, { commands = {}, events = {}, idGenera
 
 	context.addAggregate(aggregate);
 
-	// define commands
-	Object.entries(commands).forEach(([commandName, command]) => {
+	// define commandModels
+	Object.entries(commandModels).forEach(([commandName, command]) => {
 		const commandSettings = {
 			name: commandName,
 		};
@@ -81,8 +81,8 @@ module.exports = (context, aggregateName, { commands = {}, events = {}, idGenera
 		});
 	});
 
-	// define events
-	Object.entries(events).forEach(([eventName, event]) => {
+	// define eventModels
+	Object.entries(eventModels).forEach(([eventName, event]) => {
 		const eventSettings = {
 			name: eventName,
 		};
