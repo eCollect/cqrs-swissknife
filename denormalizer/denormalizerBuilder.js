@@ -103,7 +103,7 @@ module.exports = (collectionName, {
 				eventExtender.useAsId(identifier);
 		}
 
-		collection.addViewModel(viewModel);
+		collection.addViewBuilder(viewModel);
 		if (eventExtender)
 			collection.addEventExtender(eventExtender);
 
