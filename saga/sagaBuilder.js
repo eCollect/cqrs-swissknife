@@ -13,7 +13,6 @@ module.exports = ({ reactions = {}, identity = {} }) => {
 		const [context, aggregate, name] = fullName.split('.');
 
 		let identifier = identity[fullName];
-		let sagaFunction;
 
 		const sagaSettings = {
 			name,
@@ -24,7 +23,10 @@ module.exports = ({ reactions = {}, identity = {} }) => {
 		if (!Array.isArray(reaction))
 			reaction = [reaction];
 
-		reaction.forEach((item) => {
+		return reaction.forEach((item) => {
+			if (!item)
+				throw new Error('No saga function specified');
+
 			if (item.settings)
 				return Object.assign(sagaSettings, item.settings);
 
@@ -33,22 +35,18 @@ module.exports = ({ reactions = {}, identity = {} }) => {
 				return null;
 			}
 
-			if (typeof item === 'function')
-				sagaFunction = item;
+			if (typeof item === 'function') {
+				const sagaDefinition = defineSaga(sagaSettings, (event, saga, callback) => Promise.resolve(item(event, saga)).then(() => saga.commit(callback)));
 
+				if (identifier)
+					sagaDefinition.useAsId(asyncParamCallback(identifier, 'event'));
+
+				sagas.push(sagaDefinition);
+
+				return null;
+			}
 			return null;
 		});
-
-		if (!sagaFunction)
-			throw new Error('No saga function specified');
-
-		// TODO Error handling
-		const sagaDefinition = defineSaga(sagaSettings, asyncParamCallback('event', 'saga'));
-
-		if (identifier)
-			sagaDefinition.useAsId(asyncParamCallback(identifier, 'event'));
-
-		sagas.push(sagaDefinition);
 	});
 
 	return sagas;
