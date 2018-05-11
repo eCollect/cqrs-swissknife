@@ -8,14 +8,12 @@ const aggregateFactory = require('./aggregateBuilder');
 const { defineContext } = require('cqrs-domain');
 
 const loadAggregates = (contextDirectory, context) => {
-	/* eslint-disable no-sync */
 	fs.readdirSync(contextDirectory).forEach((aggregateName) => {
-		/* eslint-enable no-sync */
 		const aggregateFile = path.join(contextDirectory, aggregateName);
 
-		/* eslint-disable no-sync */
+
 		if (!fs.statSync(aggregateFile).isFile())
-			/* eslint-enable no-sync */
+
 			return;
 
 		if (path.extname(aggregateFile) !== '.js') return;

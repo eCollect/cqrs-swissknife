@@ -7,14 +7,13 @@ const sagaBuilder = require('./sagaBuilder');
 
 const loadSagas = (sagasDirectory) => {
 	const sagas = [];
-	/* eslint-disable no-sync */
+
 	fs.readdirSync(sagasDirectory).forEach((sagaName) => {
-		/* eslint-enable no-sync */
 		const sagaFile = path.join(sagasDirectory, sagaName);
 
-		/* eslint-disable no-sync */
+
 		if (!fs.statSync(sagaFile).isFile())
-			/* eslint-enable no-sync */
+
 			return;
 
 		if (path.extname(sagaFile) !== '.js') return;

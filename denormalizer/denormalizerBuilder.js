@@ -23,7 +23,7 @@ module.exports = (collectionName, {
 		const [context, aggregate, name] = eventFullName.split('.');
 
 		let identifier = identity[eventFullName];
-		let viewModelFunction;
+		let viewModelFunction = null;
 		let eventExtenderFunction;
 		let preEventExtenderFunction;
 
@@ -52,7 +52,7 @@ module.exports = (collectionName, {
 
 			if (item.preEventExtender) {
 				if (preEventExtenderFunction)
-					throw new Error('Only one event extender can be defined per event');
+					throw new Error('Only one pre-event extender can be defined per event');
 				preEventExtenderFunction = asyncParamCallback(item.preEventExtender, 'event', 'collection');
 				return;
 			}
@@ -72,9 +72,6 @@ module.exports = (collectionName, {
 
 		if (!identifier)
 			throw new Error(`No identity specified for event ${eventFullName}`);
-
-		if (typeof identifier === 'string')
-			modelSettings.id = identifier;
 
 		const viewModel = defineViewBuilder(
 			modelSettings,
@@ -97,6 +94,9 @@ module.exports = (collectionName, {
 				eventExtenderFunction,
 			);
 
+		if (typeof identifier === 'string')
+			modelSettings.id = identifier;
+
 		if (typeof identifier === 'function') {
 			viewModel.useAsId(identifier);
 			if (eventExtender)
@@ -105,10 +105,10 @@ module.exports = (collectionName, {
 
 		collection.addViewModel(viewModel);
 		if (eventExtender)
-			collection.addeventExtender(eventExtender);
+			collection.addEventExtender(eventExtender);
 
 		if (preEventExtender)
-			collection.addeventExtender(preEventExtender);
+			collection.addPreEventExtender(preEventExtender);
 	});
 
 	return collection;

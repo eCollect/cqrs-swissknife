@@ -34,7 +34,7 @@ const extendEvent = (extender) => {
 };
 
 const identifier = (identifierFunction) => {
-	if (!identifierFunction || (typeof identifierFunciton !== 'function' && typeof identifierFunction !== 'string'))
+	if (!identifierFunction || (typeof identifierFunction !== 'function' && typeof identifierFunction !== 'string'))
 		throw new Error('No identifier valid supplied!');
 
 	return { useAsId: identifierFunction };
