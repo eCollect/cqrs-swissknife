@@ -8,28 +8,27 @@ const {
 	defineEvent,
 } = require('cqrs-domain');
 
+const { asyncParamCallback } = require('../utils');
+
 const addCommandToAggregate = (preLoadConditions, preConditions, aggregate, command) => {
 	aggregate.addCommand(command);
 	preLoadConditions.forEach(cnd => command.addPreLoadCondition(cnd));
 	preConditions.forEach(cnd => command.addPreCondition(cnd));
 };
 
-const itemFactory = (contextName, aggregateName, definition) => definition;
-
 module.exports = (context, aggregateName, {
 	commandModels = {}, eventModels = {}, initialState = {}, idGenerator,
 }) => {
-	const contextName = context.name;
-
 	const aggregate = defineAggregate({
 		name: aggregateName,
 		defaultCommandPayload: '',
 		defaultEventPayload: '',
 		defaultPreConditionPayload: '',
+		context: context.name,
 	}, { ...initialState });
 
 	if (idGenerator)
-		aggregate.defineCommandAwareAggregateIdGenerator((cmd, callback) => Promise.resolve(idGenerator(cmd)).then(id => callback(null, id)).catch(e => callback(e)));
+		aggregate.defineCommandAwareAggregateIdGenerator(asyncParamCallback(idGenerator, 'cmd'));
 
 	context.addAggregate(aggregate);
 
@@ -53,11 +52,7 @@ module.exports = (context, aggregateName, {
 					preLoadConditions,
 					preConditions,
 					aggregate,
-					itemFactory(
-						contextName,
-						aggregateName,
-						defineCommand(commandSettings, item),
-					),
+					defineCommand(commandSettings, item),
 				);
 
 			// settings ( exists ? )
@@ -65,18 +60,10 @@ module.exports = (context, aggregateName, {
 				return Object.assign(commandSettings, item.settings);
 
 			if (item.preLoadCondition)
-				return preLoadConditions.push(itemFactory(
-					contextName,
-					aggregateName,
-					definePreLoadCondition({ name: [commandName], priority }, (cmd, callback) => Promise.resolve(item.preLoadCondition(cmd)).then(r => callback(null, r)).catch(e => callback(e))),
-				));
+				return preLoadConditions.push(definePreLoadCondition({ name: [commandName], priority }, asyncParamCallback(item.preLoadCondition, 'cmd')));
 
 			if (item.preCondition)
-				return preConditions.push(itemFactory(
-					contextName,
-					aggregateName,
-					definePreCondition({ name: [commandName], priority }, (cmd, agg, callback) => Promise.resolve(item.preCondition(cmd, agg)).then(r => callback(null, r)).catch(e => callback(e))),
-				));
+				return preConditions.push(definePreCondition({ name: [commandName], priority }, asyncParamCallback(item.preCondition, 'cmd', 'agg')));
 
 			return null;
 		});
@@ -95,11 +82,7 @@ module.exports = (context, aggregateName, {
 		return event.forEach((item) => {
 			// command
 			if (typeof item === 'function')
-				return aggregate.addEvent(itemFactory(
-					contextName,
-					aggregateName,
-					defineEvent(eventSettings, item),
-				));
+				return aggregate.addEvent(defineEvent(eventSettings, item));
 
 			// settings ( exists ? )
 			if (item.settings)

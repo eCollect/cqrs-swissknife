@@ -4,7 +4,7 @@ const {
 	defineSaga,
 } = require('cqrs-saga');
 
-const { asyncParamCallback } = require('../utils/index');
+const { asyncParamCallback } = require('../utils');
 
 module.exports = ({ reactions = {}, identity = {} }) => {
 	const sagas = [];
@@ -43,10 +43,10 @@ module.exports = ({ reactions = {}, identity = {} }) => {
 			throw new Error('No saga function specified');
 
 		// TODO Error handling
-		const sagaDefinition = defineSaga(sagaSettings, (event, saga, callback) => Promise.resolve(sagaFunction(event, saga)).then(() => saga.commit(callback)));
+		const sagaDefinition = defineSaga(sagaSettings, asyncParamCallback('event', 'saga'));
 
 		if (identifier)
-			sagaDefinition.useAsId(asyncParamCallback(identifier));
+			sagaDefinition.useAsId(asyncParamCallback(identifier, 'event'));
 
 		sagas.push(sagaDefinition);
 	});

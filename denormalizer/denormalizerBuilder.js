@@ -39,14 +39,14 @@ module.exports = (collectionName, {
 		model.forEach((item) => {
 			// command
 			if (typeof item === 'function') {
-				viewModelFunction = (event, vm, callback) => Promise.resolve(item(event, vm)).then(() => vm.commit(callback));
+				viewModelFunction = asyncParamCallback(item, 'event', 'vm');
 				return;
 			}
 
 			if (item.eventExtender) {
 				if (eventExtenderFunction)
 					throw new Error('Only one event extender can be defined per event');
-				eventExtenderFunction = asyncParamCallback(item.eventExtender, 'item', 'vm');
+				eventExtenderFunction = asyncParamCallback(item.eventExtender, 'event', 'vm');
 				return;
 			}
 
@@ -98,9 +98,9 @@ module.exports = (collectionName, {
 			modelSettings.id = identifier;
 
 		if (typeof identifier === 'function') {
-			viewModel.useAsId(identifier);
+			viewModel.useAsId(asyncParamCallback(identifier, 'event'));
 			if (eventExtender)
-				eventExtender.useAsId(identifier);
+				eventExtender.useAsId(asyncParamCallback(identifier, 'event'));
 		}
 
 		collection.addViewBuilder(viewModel);
