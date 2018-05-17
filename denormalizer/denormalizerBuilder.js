@@ -10,7 +10,7 @@ const {
 const { asyncParamCallback } = require('../utils');
 
 module.exports = (collectionName, {
-	reactions = {}, repositorySettings = {}, identity = {},
+	reactions = {}, repositorySettings = {}, identity = {}, initialValues = {},
 }) => {
 	const collection = defineCollection({
 		name: collectionName,
@@ -31,6 +31,7 @@ module.exports = (collectionName, {
 			name,
 			context,
 			aggregate,
+			modelInitValues: initialValues[eventFullName],
 		};
 
 		if (!Array.isArray(model))
