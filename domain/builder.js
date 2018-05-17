@@ -21,5 +21,5 @@ const buildDomain = (domain, definitions) => Object.entries(domain).map(entries 
 module.exports = (domain, definitions) => {
 	if (typeof domain === 'string' || domain instanceof String)
 		domain = loader(domain);
-	buildDomain(domain, definitions);
+	return buildDomain(domain, definitions);
 };
