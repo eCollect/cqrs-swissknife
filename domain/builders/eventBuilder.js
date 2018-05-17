@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = ({ eventName, event }, { defineEvent }) => {
+module.exports = ({ eventName, event }, { Event }) => {
 	const eventSettings = {
 		name: eventName,
 	};
@@ -12,7 +12,7 @@ module.exports = ({ eventName, event }, { defineEvent }) => {
 	return event.reduce((result, item) => {
 		// command
 		if (typeof item === 'function')
-			result.event = defineEvent(eventSettings, item);
+			result.event = new Event(eventSettings, item);
 
 		// settings ( exists ? )
 		if (item.settings)

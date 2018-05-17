@@ -3,8 +3,8 @@
 const loader = require('./loader');
 const aggregateBuilder = require('./builders/aggregateBuilder');
 
-const buildContext = ([contextName, aggregates], { defineContext, ...definitions }) => {
-	const context = defineContext({ name: contextName, externallyLoaded: true });
+const buildContext = ([contextName, aggregates], { Context, ...definitions }) => {
+	const context = new Context({ name: contextName, externallyLoaded: true });
 
 	Object.entries(aggregates).forEach(([aggregateName, aggregate]) => {
 		const aggregateFile = aggregate.path;

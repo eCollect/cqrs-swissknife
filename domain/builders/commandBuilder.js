@@ -2,7 +2,7 @@
 
 const { asyncParamCallback } = require('../../utils');
 
-module.exports = ({ commandName, command }, { defineCommand, definePreLoadCondition, definePreCondition }) => {
+module.exports = ({ commandName, command }, { Command, PreLoadCondition, PreCondition }) => {
 	const commandSettings = {
 		name: commandName,
 	};
@@ -13,7 +13,7 @@ module.exports = ({ commandName, command }, { defineCommand, definePreLoadCondit
 	return command.reduce((result, item, priority) => {
 		// command
 		if (typeof item === 'function') {
-			result.command = defineCommand(commandSettings, item);
+			result.command = new Command(commandSettings, item);
 			return result;
 		}
 
@@ -24,12 +24,12 @@ module.exports = ({ commandName, command }, { defineCommand, definePreLoadCondit
 		}
 
 		if (item.preLoadCondition) {
-			result.preLoadConditions.push(definePreLoadCondition({ name: [commandName], priority }, asyncParamCallback(item.preLoadCondition, 'cmd')));
+			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName], priority }, asyncParamCallback(item.preLoadCondition, 'cmd')));
 			return result;
 		}
 
 		if (item.preCondition) {
-			result.preConditions.push(definePreCondition({ name: [commandName], priority }, asyncParamCallback(item.preCondition, 'cmd', 'agg')));
+			result.preConditions.push(new PreCondition({ name: [commandName], priority }, asyncParamCallback(item.preCondition, 'cmd', 'agg')));
 			return result;
 		}
 

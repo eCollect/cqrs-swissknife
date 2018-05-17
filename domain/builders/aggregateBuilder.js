@@ -18,10 +18,10 @@ const addEventToAggregate = (aggregate, { event }) => {
 module.exports = (context, aggregateName, {
 	commands = {}, events = {}, initialState = {}, idGenerator,
 }, {
-	defineAggregate,
+	Aggregate,
 	...definitions
 }) => {
-	const aggregate = defineAggregate({
+	const aggregate = new Aggregate({
 		name: aggregateName,
 		defaultCommandPayload: '',
 		defaultEventPayload: '',
