@@ -23,7 +23,6 @@ const loadAggregate = (filePath, { commands = {}, events = {} }) => {
 	return aggregate;
 };
 
-
 const loadContext = (contextDirectory) => {
 	const context = {};
 
