@@ -14,7 +14,10 @@ const buildContext = ([contextName, aggregates], { Context, ...definitions }) =>
 	return context;
 };
 
-const buildDomain = (domain, definitions) => Object.entries(domain).map(entries => buildContext(entries, definitions));
+const buildDomain = (domain, definitions) => Object.entries(domain).reduce((domainTree, entries) => {
+	domainTree[entries[0]] = buildContext(entries, definitions);
+	return domainTree;
+}, {});
 
 // Domain may be a path to the domain dir or a loaded domain object
 // Definitions come from cqrs-domain module
