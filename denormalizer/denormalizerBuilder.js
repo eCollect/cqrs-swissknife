@@ -10,13 +10,13 @@ const {
 const { asyncParamCallback } = require('../utils');
 
 module.exports = (collectionName, {
-	reactions = {}, repositorySettings = {}, identity = {},
+	reactions = {}, repositorySettings = {}, identity = {}, initialState = {},
 }) => {
 	const collection = defineCollection({
 		name: collectionName,
 		defaultPayload: '',
 		repositorySettings,
-	});
+	}, initialState);
 
 	// define viewModels
 	Object.entries(reactions).forEach(([eventFullName, model]) => {

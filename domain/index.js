@@ -3,7 +3,7 @@
 const builder = require('./builder');
 const loader = require('./loader');
 
-module.export = {
+module.exports = {
 	builder,
 	loader,
 };
