@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = ({ reactions = {}, identity = {} }, { defineSaga }) => Object.entries(reactions).map(([fullName, reaction]) => {
+module.exports = ({ reactions = {}, identity = {} }, { Saga }) => Object.entries(reactions).map(([fullName, reaction]) => {
 	const [context, aggregate, name] = fullName.split('.');
 
 	let identifier = identity[fullName];
@@ -40,7 +40,7 @@ module.exports = ({ reactions = {}, identity = {} }, { defineSaga }) => Object.e
 	if (identifier && typeof identifier === 'string')
 		sagaSettings.id = identifier;
 
-	const sagaDefinition = defineSaga(sagaSettings, sagaFunction);
+	const sagaDefinition = new Saga(sagaSettings, sagaFunction);
 
 	if (identifier && typeof identifier === 'function')
 		sagaDefinition.useAsId(identifier);

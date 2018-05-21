@@ -2,7 +2,7 @@
 
 const { asyncParamCallback } = require('../../utils');
 
-module.exports = ({ eventFullName, reaction, identifier }, { defineViewBuilder, definePreEventExtender, defineEventExtender }) => {
+module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }) => {
 	const [context, aggregate, name] = eventFullName.split('.');
 
 	let viewModelFunction = null;
@@ -59,7 +59,7 @@ module.exports = ({ eventFullName, reaction, identifier }, { defineViewBuilder, 
 	if (typeof identifier === 'string')
 		modelSettings.id = identifier;
 
-	const viewModel = defineViewBuilder(
+	const viewModel = new ViewBuilder(
 		modelSettings,
 		viewModelFunction,
 	);
@@ -67,7 +67,7 @@ module.exports = ({ eventFullName, reaction, identifier }, { defineViewBuilder, 
 	let preEventExtender;
 
 	if (preEventExtenderFunction)
-		preEventExtender = definePreEventExtender(
+		preEventExtender = new PreEventExtender(
 			modelSettings,
 			preEventExtenderFunction,
 		);
@@ -75,7 +75,7 @@ module.exports = ({ eventFullName, reaction, identifier }, { defineViewBuilder, 
 	let eventExtender;
 
 	if (eventExtenderFunction)
-		eventExtender = defineEventExtender(
+		eventExtender = new EventExtender(
 			modelSettings,
 			eventExtenderFunction,
 		);

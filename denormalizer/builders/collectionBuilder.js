@@ -20,12 +20,12 @@ module.exports = (
 		reactions = {}, repositorySettings = {}, identity = {}, initialState = {},
 	},
 	{
-		defineCollection,
+		Collection,
 		...definitions
 	},
 ) => Object.entries(reactions).reduce(
 	(collection, [eventFullName, reaction]) => addViewModelToCollection(collection, viewModelBuilder({ eventFullName, reaction, identifier: identity[eventFullName] }, definitions)),
-	defineCollection({
+	new Collection({
 		name: collectionName,
 		defaultPayload: '',
 		repositorySettings,
