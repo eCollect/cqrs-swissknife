@@ -24,4 +24,4 @@ const loadCollections = (collectionsDirectory) => {
 	return collections;
 };
 
-module.exports = (collectionsDirectory, options) => loadCollections(loadCollections, options);
+module.exports = (collectionsDirectory, options) => loadCollections(collectionsDirectory, options);
