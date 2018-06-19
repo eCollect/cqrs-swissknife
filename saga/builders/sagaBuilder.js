@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = ({ reactions = {}, identity = {} }, { Saga }) => Object.entries(reactions).map(([fullName, reaction]) => {
+module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => saga, { Saga }) => Object.entries(reactions).map(([fullName, reaction]) => {
 	const [context, aggregate, name] = fullName.split('.');
 
 	let identifier = identity[fullName];
@@ -28,7 +28,7 @@ module.exports = ({ reactions = {}, identity = {} }, { Saga }) => Object.entries
 		}
 
 		if (typeof item === 'function') {
-			sagaFunction = (event, saga, callback) => Promise.resolve(item(event, saga)).then(() => saga.commit(callback));
+			sagaFunction = (event, saga, callback) => Promise.resolve(item(event, customApiBuilder(event, saga))).then(() => saga.commit(callback));
 			return null;
 		}
 		return null;
