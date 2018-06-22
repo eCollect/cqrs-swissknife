@@ -3,13 +3,14 @@
 const loader = require('./loader');
 const aggregateBuilder = require('./builders/aggregateBuilder');
 
-const buildContext = ([contextName, aggregates], { Context, ...definitions }) => {
+const buildContext = async ([contextName, aggregates], { Context, ...definitions }) => {
 	const context = new Context({ name: contextName, externallyLoaded: true });
 
-	Object.entries(aggregates).forEach(([aggregateName, aggregate]) => {
+	const entries = Object.entries(aggregates);
+	for(const [aggregateName, aggregate] of entries) { // eslint-disable-line
 		const aggregateFile = aggregate.path;
-		aggregateBuilder(context, aggregateName, require(aggregateFile), definitions); // eslint-disable-line
-	});
+		await aggregateBuilder(context, aggregateName, require(aggregateFile), definitions); // eslint-disable-line
+	}
 
 	return context;
 };
@@ -21,7 +22,7 @@ const buildDomain = (domain, definitions) => Object.entries(domain).reduce((doma
 
 // Domain may be a path to the domain dir or a loaded domain object
 // Definitions come from cqrs-domain module
-module.exports = (domain, definitions) => {
+module.exports = async (domain, definitions) => {
 	if (typeof domain === 'string' || domain instanceof String)
 		domain = loader(domain);
 	return buildDomain(domain, definitions);

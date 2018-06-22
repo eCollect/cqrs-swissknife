@@ -2,7 +2,18 @@
 
 const { asyncParamCallback } = require('../../utils');
 
-module.exports = ({ commandName, command }, { Command, PreLoadCondition, PreCondition }) => {
+module.exports = async (
+	{
+		commandName,
+		command,
+	},
+	{
+		Command,
+		PreLoadCondition,
+		PreCondition,
+		validatorFunctionBuilder,
+	},
+) => {
 	const commandSettings = {
 		name: commandName,
 	};
@@ -10,10 +21,23 @@ module.exports = ({ commandName, command }, { Command, PreLoadCondition, PreCond
 	if (!Array.isArray(command))
 		command = [command];
 
-	return command.reduce((result, item, priority) => {
+
+	const result = {
+		preLoadConditions: [],
+		preConditions: [],
+		command: null,
+		schema: null,
+	};
+
+	for (const item of command) { // eslint-disable-line no-restricted-syntax
 		// command
 		if (typeof item === 'function') {
 			result.command = new Command(commandSettings, item);
+			return result;
+		}
+
+		if (item.schema && validatorFunctionBuilder) {
+			result.validator = asyncParamCallback(await Promise.resolve(validatorFunctionBuilder(item.schema)), 'schema'); // eslint-disable-line no-await-in-loop
 			return result;
 		}
 
@@ -24,19 +48,15 @@ module.exports = ({ commandName, command }, { Command, PreLoadCondition, PreCond
 		}
 
 		if (item.preLoadCondition) {
-			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName], priority }, asyncParamCallback(item.preLoadCondition, 'cmd')));
+			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName] }, asyncParamCallback(item.preLoadCondition, 'cmd')));
 			return result;
 		}
 
 		if (item.preCondition) {
-			result.preConditions.push(new PreCondition({ name: [commandName], priority }, asyncParamCallback(item.preCondition, 'cmd', 'agg')));
+			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCallback(item.preCondition, 'cmd', 'agg')));
 			return result;
 		}
+	}
 
-		return result;
-	}, {
-		preLoadConditions: [],
-		preConditions: [],
-		command: null,
-	});
+	return result;
 };

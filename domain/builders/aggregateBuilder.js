@@ -5,7 +5,15 @@ const { asyncParamCallback } = require('../../utils');
 const commandBuilder = require('./commandBuilder');
 const eventBuilder = require('./eventBuilder');
 
-const addCommandToAggregate = (aggregate, { preLoadConditions, preConditions, command }) => {
+const addCommandToAggregate = (aggregate, {
+	preLoadConditions,
+	preConditions,
+	validator,
+	command,
+}) => {
+	if (validator)
+		command.defineValidator(validator);
+
 	aggregate.addCommand(command);
 	preLoadConditions.forEach(cnd => command.addPreLoadCondition(cnd));
 	preConditions.forEach(cnd => command.addPreCondition(cnd));
@@ -15,12 +23,12 @@ const addEventToAggregate = (aggregate, { event }) => {
 	aggregate.addEvent(event);
 };
 
-module.exports = (context, aggregateName, {
+module.exports = async (context, aggregateName, {
 	commands = {}, events = {}, initialState = {}, idGenerator,
 }, {
-	Aggregate,
-	...definitions
-}) => {
+		Aggregate,
+		...definitions
+	}) => {
 	const aggregate = new Aggregate({
 		name: aggregateName,
 		defaultCommandPayload: '',
@@ -35,7 +43,7 @@ module.exports = (context, aggregateName, {
 	context.addAggregate(aggregate);
 
 	// define commandModels
-	Object.entries(commands).forEach(([commandName, command]) => addCommandToAggregate(aggregate, commandBuilder({ commandName, command }, definitions)));
+	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command }, definitions))));
 
 	// define eventModels
 	Object.entries(events).forEach(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
