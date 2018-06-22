@@ -15,10 +15,14 @@ const buildContext = async ([contextName, aggregates], { Context, ...definitions
 	return context;
 };
 
-const buildDomain = (domain, definitions) => Object.entries(domain).reduce((domainTree, entries) => {
-	domainTree[entries[0]] = buildContext(entries, definitions);
+
+const buildDomain = async (domain, definitions) => {
+	const domainTree = {};
+	const domainTreeEntries = Object.entries(domain);
+	for(const entries of domainTreeEntries) // eslint-disable-line
+		domainTree[entries[0]] = await buildContext(entries, definitions); // eslint-disable-line
 	return domainTree;
-}, {});
+};
 
 // Domain may be a path to the domain dir or a loaded domain object
 // Definitions come from cqrs-domain module
