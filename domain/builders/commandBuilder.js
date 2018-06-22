@@ -33,28 +33,28 @@ module.exports = async (
 		// command
 		if (typeof item === 'function') {
 			result.command = new Command(commandSettings, item);
-			return result;
+			continue;
 		}
 
 		if (item.schema && validatorFunctionBuilder) {
 			result.validator = asyncParamCallback(await Promise.resolve(validatorFunctionBuilder(item.schema)), 'schema'); // eslint-disable-line no-await-in-loop
-			return result;
+			continue;
 		}
 
 		// settings ( exists ? )
 		if (item.settings) {
 			Object.assign(commandSettings, item.settings);
-			return result;
+			continue;
 		}
 
 		if (item.preLoadCondition) {
 			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName] }, asyncParamCallback(item.preLoadCondition, 'cmd')));
-			return result;
+			continue;
 		}
 
 		if (item.preCondition) {
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCallback(item.preCondition, 'cmd', 'agg')));
-			return result;
+			continue;
 		}
 	}
 
