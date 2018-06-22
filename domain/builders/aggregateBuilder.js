@@ -12,7 +12,7 @@ const addCommandToAggregate = (aggregate, {
 	command,
 }) => {
 	if (validator)
-		command.defineValidator(validator);
+		command.defineValidation(validator);
 
 	aggregate.addCommand(command);
 	preLoadConditions.forEach(cnd => command.addPreLoadCondition(cnd));
