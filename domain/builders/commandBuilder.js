@@ -1,6 +1,6 @@
 'use strict';
 
-const { asyncParamCallback } = require('../../utils');
+const { asyncParamCallback, asyncParamApiCallback } = require('../../utils');
 
 module.exports = async (
 	{
@@ -13,6 +13,7 @@ module.exports = async (
 		PreCondition,
 		validatorFunctionBuilder,
 	},
+	customApiBuilder,
 ) => {
 	const commandSettings = {
 		name: commandName,
@@ -48,12 +49,12 @@ module.exports = async (
 		}
 
 		if (item.preLoadCondition) {
-			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName] }, asyncParamCallback(item.preLoadCondition, 'cmd')));
+			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName] }, asyncParamApiCallback(item.preLoadCondition, customApiBuilder, 'cmd')));
 			continue;
 		}
 
 		if (item.preCondition) {
-			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCallback(item.preCondition, 'cmd', 'agg')));
+			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamApiCallback(item.preCondition, customApiBuilder, 'cmd', 'agg')));
 			continue;
 		}
 	}

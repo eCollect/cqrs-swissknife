@@ -1,6 +1,6 @@
 'use strict';
 
-const { asyncParamCallback } = require('../../utils');
+const { asyncParamApiCallback, noop } = require('../../utils');
 
 const commandBuilder = require('./commandBuilder');
 const eventBuilder = require('./eventBuilder');
@@ -23,12 +23,15 @@ const addEventToAggregate = (aggregate, { event }) => {
 	aggregate.addEvent(event);
 };
 
-module.exports = async (context, aggregateName, {
-	commands = {}, events = {}, initialState = {}, idGenerator,
-}, {
+module.exports = async (context, aggregateName,
+	{
+		commands = {}, events = {}, initialState = {}, idGenerator,
+	}, {
 		Aggregate,
 		...definitions
-	}) => {
+	},
+	customApiBuilder = noop,
+) => {
 	const aggregate = new Aggregate({
 		name: aggregateName,
 		defaultCommandPayload: '',
@@ -38,15 +41,15 @@ module.exports = async (context, aggregateName, {
 	}, { ...initialState });
 
 	if (idGenerator)
-		aggregate.defineCommandAwareAggregateIdGenerator(asyncParamCallback(idGenerator, 'cmd'));
+		aggregate.defineCommandAwareAggregateIdGenerator(asyncParamApiCallback(idGenerator, customApiBuilder, 'cmd'));
 
 	context.addAggregate(aggregate);
 
 	// define commandModels
-	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command }, definitions))));
+	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command }, definitions, customApiBuilder))));
 
 	// define eventModels
-	Object.entries(events).forEach(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
+	Object.entries(events).forEach(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions, customApiBuilder)));
 
 	return aggregate;
 };
