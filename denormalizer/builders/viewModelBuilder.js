@@ -1,8 +1,8 @@
 'use strict';
 
-const { asyncParamCallback } = require('../../utils');
+const { asyncParamApiCallback } = require('../../utils');
 
-module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }) => {
+module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }, customApiBuilder) => {
 	const [context, aggregate, name] = eventFullName.split('.');
 
 	let viewModelFunction = null;
@@ -21,21 +21,21 @@ module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEve
 	reaction.forEach((item) => {
 		// event handler
 		if (typeof item === 'function') {
-			viewModelFunction = asyncParamCallback(item, 'event', 'vm');
+			viewModelFunction = asyncParamApiCallback(item, customApiBuilder, 'event', 'vm');
 			return;
 		}
 
 		if (item.eventExtender) {
 			if (eventExtenderFunction)
 				throw new Error('Only one event extender can be defined per event');
-			eventExtenderFunction = asyncParamCallback(item.eventExtender, 'event', 'vm');
+			eventExtenderFunction = asyncParamApiCallback(item.eventExtender, customApiBuilder, 'event', 'vm');
 			return;
 		}
 
 		if (item.preEventExtender) {
 			if (preEventExtenderFunction)
 				throw new Error('Only one pre-event extender can be defined per event');
-			preEventExtenderFunction = asyncParamCallback(item.preEventExtender, 'event', 'collection');
+			preEventExtenderFunction = asyncParamApiCallback(item.preEventExtender, customApiBuilder, 'event', 'collection');
 			return;
 		}
 
@@ -81,9 +81,9 @@ module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEve
 		);
 
 	if (typeof identifier === 'function') {
-		viewModel.useAsId(asyncParamCallback(identifier, 'event'));
+		viewModel.useAsId(asyncParamApiCallback(identifier, customApiBuilder, 'event'));
 		if (eventExtender)
-			eventExtender.useAsId(asyncParamCallback(identifier, 'event'));
+			eventExtender.useAsId(asyncParamApiCallback(identifier, customApiBuilder, 'event'));
 	}
 
 	return {

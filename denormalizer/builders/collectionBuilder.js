@@ -23,8 +23,9 @@ module.exports = (
 		Collection,
 		...definitions
 	},
+	customApiBuilder,
 ) => Object.entries(reactions).reduce(
-	(collection, [eventFullName, reaction]) => addViewModelToCollection(collection, viewModelBuilder({ eventFullName, reaction, identifier: identity[eventFullName] }, definitions)),
+	(collection, [eventFullName, reaction]) => addViewModelToCollection(collection, viewModelBuilder({ eventFullName, reaction, identifier: identity[eventFullName] }, definitions, customApiBuilder)),
 	new Collection({
 		name: collectionName,
 		defaultPayload: '',
