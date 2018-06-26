@@ -1,8 +1,8 @@
 'use strict';
 
-const { asyncParamApiCallback } = require('../../utils');
+const { asyncParamApiCallback, noop } = require('../../utils');
 
-module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }, customApiBuilder) => {
+module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }, customApiBuilder = noop) => {
 	const [context, aggregate, name] = eventFullName.split('.');
 
 	let viewModelFunction = null;

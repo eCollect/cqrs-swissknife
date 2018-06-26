@@ -1,6 +1,6 @@
 'use strict';
 
-const { asyncParamCallback, asyncParamApiCallback } = require('../../utils');
+const { nextify, asyncParamApiCallback } = require('../../utils');
 
 module.exports = async (
 	{
@@ -38,7 +38,7 @@ module.exports = async (
 		}
 
 		if (item.schema && validatorFunctionBuilder) {
-			result.validator = asyncParamCallback(await Promise.resolve(validatorFunctionBuilder(item.schema)), 'schema'); // eslint-disable-line no-await-in-loop
+			result.validator = nextify(await Promise.resolve(validatorFunctionBuilder(item.schema)), 'schema'); // eslint-disable-line no-await-in-loop
 			continue;
 		}
 
