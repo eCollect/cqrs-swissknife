@@ -25,7 +25,7 @@ const addEventToAggregate = (aggregate, { event }) => {
 
 module.exports = async (context, aggregateName,
 	{
-		commands = {}, events = {}, initialState = {}, idGenerator,
+		commands = {}, events = {}, initialState = {}, idGenerator, options = {},
 	}, {
 		Aggregate,
 		...definitions
@@ -34,10 +34,8 @@ module.exports = async (context, aggregateName,
 ) => {
 	const aggregate = new Aggregate({
 		name: aggregateName,
-		defaultCommandPayload: '',
-		defaultEventPayload: '',
-		defaultPreConditionPayload: '',
 		context: context.name,
+		...options,
 	}, { ...initialState });
 
 	if (idGenerator)
@@ -49,7 +47,7 @@ module.exports = async (context, aggregateName,
 	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command }, definitions, customApiBuilder))));
 
 	// define eventModels
-	Object.entries(events).forEach(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions, customApiBuilder)));
+	Object.entries(events).forEach(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
 
 	return aggregate;
 };

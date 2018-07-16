@@ -1,6 +1,5 @@
 'use strict';
 
-
 const nextifyWrappers = {
 	1: fn => (par1, next) => Promise.resolve(fn(par1)).then(() => next(), error => next(error)),
 	2: fn => (par1, par2, next) => Promise.resolve(fn(par1, par2)).then(() => next(), error => next(error)),

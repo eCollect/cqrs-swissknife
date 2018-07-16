@@ -53,10 +53,8 @@ module.exports = async (
 			continue;
 		}
 
-		if (item.preCondition) {
+		if (item.preCondition)
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamApiCallback(item.preCondition, customApiBuilder, 'cmd', 'agg')));
-			continue;
-		}
 	}
 
 	return result;
