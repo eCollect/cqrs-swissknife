@@ -15,9 +15,16 @@ const identifier = (identifierFunction) => {
 	return { useAsId: identifierFunction };
 };
 
+const shouldHandle = (fn) => {
+	if (!fn || typeof fn !== 'function')
+		throw new Error('No identifier valid supplied!');
+
+	return { shouldHandle: fn };
+};
+
 module.exports = {
 	settings,
 	only,
-
+	shouldHandle,
 	identifier,
 };
