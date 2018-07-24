@@ -3,9 +3,19 @@
 const settings = require('../../shared/settings');
 const sharedOnly = require('../../shared/only');
 
+const shouldHandle = (fn) => {
+	if (!fn || typeof fn !== 'function')
+		throw new Error('No identifier valid supplied!');
+
+	return { shouldHandle: fn };
+};
+
 const only = {
 	ifExists: sharedOnly.ifExists,
 	ifNotExists: sharedOnly.ifNotExists,
+	if(condition) {
+		return shouldHandle(condition);
+	},
 };
 
 const identifier = (identifierFunction) => {
@@ -13,13 +23,6 @@ const identifier = (identifierFunction) => {
 		throw new Error('No identifier valid supplied!');
 
 	return { useAsId: identifierFunction };
-};
-
-const shouldHandle = (fn) => {
-	if (!fn || typeof fn !== 'function')
-		throw new Error('No identifier valid supplied!');
-
-	return { shouldHandle: fn };
 };
 
 module.exports = {

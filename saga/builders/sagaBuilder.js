@@ -1,5 +1,7 @@
 'use strict';
 
+const { asyncParamApiCallback } = require('../../utils');
+
 module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => saga, { Saga }) => Object.entries(reactions).map(([fullName, reaction]) => {
 	const [context, aggregate, name] = fullName.split('.');
 
@@ -29,7 +31,7 @@ module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => 
 		}
 
 		if (item.shouldHandle) {
-			shouldHandle = item.shouldHandle;
+			shouldHandle = asyncParamApiCallback(item.shouldHandle, customApiBuilder, 'evt', 'saga');
 			return null;
 		}
 
