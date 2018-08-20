@@ -2,8 +2,15 @@
 
 const { asyncParamApiCallback } = require('../../utils');
 
+const nameRetriever = (eventFullName) => {
+	const split = eventFullName.split('.');
+	if (split.length === 4)
+		return split.slice(1);
+	return split;
+};
+
 module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => saga, { Saga }) => Object.entries(reactions).map(([fullName, reaction]) => {
-	const [context, aggregate, name] = fullName.split('.');
+	const [context, aggregate, name] = nameRetriever(fullName);
 
 	let identifier = identity[fullName];
 	let sagaFunction;

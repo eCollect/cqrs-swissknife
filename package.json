@@ -12,9 +12,9 @@
     "url": "https://github.com/eCollect/cqrs-swissknife.git"
   },
   "devDependencies": {
-    "eslint": "^5.1.0",
-    "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-plugin-import": "^2.13.0"
+    "eslint": "^5.4.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
   },
   "author": "eCollect AG.",
   "license": "MIT"

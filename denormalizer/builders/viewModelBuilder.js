@@ -2,8 +2,15 @@
 
 const { asyncParamApiCallback, noop } = require('../../utils');
 
+const nameRetriever = (eventFullName) => {
+	const split = eventFullName.split('.');
+	if (split.length === 4)
+		return split.slice(1);
+	return split;
+};
+
 module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }, customApiBuilder = noop) => {
-	const [context, aggregate, name] = eventFullName.split('.');
+	const [context, aggregate, name] = nameRetriever(eventFullName);
 
 	let viewModelFunction = null;
 	let eventExtenderFunction;
