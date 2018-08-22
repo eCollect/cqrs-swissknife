@@ -1,16 +1,9 @@
 'use strict';
 
-const { asyncParamApiCallback, noop } = require('../../utils');
-
-const nameRetriever = (eventFullName) => {
-	const split = eventFullName.split('.');
-	if (split.length === 4)
-		return split.slice(1);
-	return split;
-};
+const { asyncParamApiCallback, noop, nameRetriever } = require('../../utils');
 
 module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }, customApiBuilder = noop) => {
-	const [context, aggregate, name] = nameRetriever(eventFullName);
+	const [context, aggregate, name] = nameRetriever.event(eventFullName);
 
 	let viewModelFunction = null;
 	let eventExtenderFunction;

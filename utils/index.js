@@ -32,8 +32,21 @@ const asyncParamApiCallback = (fn, api, ...params) => {
 
 const noop = () => ({});
 
+const nameRetriever = {
+	/**
+	 * Supports two fomat of event names : [context].[domain].[agg] OR [type].[context].[domain].[agg]
+	 */
+	event: (eventFullName) => {
+		const split = eventFullName.split('.');
+		if (split.length === 4)
+			return split.slice(1);
+		return split;
+	},
+};
+
 module.exports = {
 	nextify,
 	asyncParamApiCallback,
 	noop,
+	nameRetriever,
 };
