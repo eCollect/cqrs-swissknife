@@ -56,5 +56,6 @@ module.exports = {
 	noop,
 	valueop,
 	isObject,
+	isString,
 	nameRetriever,
 };

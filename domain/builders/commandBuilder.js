@@ -6,7 +6,7 @@ module.exports = async (
 	{
 		commandName,
 		command,
-		eventEnricher,
+		AggregateApi,
 	},
 	{
 		Command,
@@ -34,7 +34,7 @@ module.exports = async (
 	for (const item of command) { // eslint-disable-line no-restricted-syntax
 		// command
 		if (typeof item === 'function') {
-			result.command = new Command(commandSettings, item);
+			result.command = new Command(commandSettings, (cmd, agg) => item(cmd, new AggregateApi(agg), customApiBuilder(cmd)));
 			continue;
 		}
 

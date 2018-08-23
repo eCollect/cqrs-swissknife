@@ -5,6 +5,8 @@ const { asyncParamApiCallback, noop } = require('../../utils');
 const commandBuilder = require('./commandBuilder');
 const eventBuilder = require('./eventBuilder');
 
+const generateAggregateApi = require('../apis/generateAggregateApi');
+
 const addCommandToAggregate = (aggregate, {
 	preLoadConditions,
 	preConditions,
@@ -47,8 +49,11 @@ module.exports = async (context, aggregateName,
 	// define eventModels
 	const eventNames = Object.entries(events).map(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
 
+	// generate aggregateApi class
+	const AggregateApi = generateAggregateApi(aggregate, eventNames, eventEnricher);
+
 	// define commandModels
-	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, eventEnricher }, definitions, customApiBuilder))));
+	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, AggregateApi }, definitions, customApiBuilder))));
 
 	return aggregate;
 };
