@@ -1,6 +1,6 @@
 {
   "name": "cqrs-swissknife",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
   "main": "index.js",
   "private": false,
@@ -17,5 +17,8 @@
     "eslint-plugin-import": "^2.14.0"
   },
   "author": "eCollect AG.",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dotty": "^0.1.0"
+  }
 }

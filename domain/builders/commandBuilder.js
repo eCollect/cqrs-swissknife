@@ -6,6 +6,7 @@ module.exports = async (
 	{
 		commandName,
 		command,
+		eventEnricher,
 	},
 	{
 		Command,

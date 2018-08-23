@@ -21,11 +21,12 @@ const addCommandToAggregate = (aggregate, {
 
 const addEventToAggregate = (aggregate, { event }) => {
 	aggregate.addEvent(event);
+	return event.name;
 };
 
 module.exports = async (context, aggregateName,
 	{
-		commands = {}, events = {}, initialState = {}, idGenerator, options = {},
+		commands = {}, events = {}, initialState = {}, eventEnricher, idGenerator, options = {},
 	}, {
 		Aggregate,
 		...definitions
@@ -43,11 +44,11 @@ module.exports = async (context, aggregateName,
 
 	context.addAggregate(aggregate);
 
-	// define commandModels
-	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command }, definitions, customApiBuilder))));
-
 	// define eventModels
-	Object.entries(events).forEach(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
+	const eventNames = Object.entries(events).map(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
+
+	// define commandModels
+	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, eventEnricher }, definitions, customApiBuilder))));
 
 	return aggregate;
 };

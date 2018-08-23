@@ -32,6 +32,12 @@ const asyncParamApiCallback = (fn, api, ...params) => {
 
 const noop = () => ({});
 
+const valueop = v => v;
+
+const isObject = val => val != null && typeof val === 'object' && Array.isArray(val) === false;
+
+const isString = val => typeof val === 'string';
+
 const nameRetriever = {
 	/**
 	 * Supports two fomat of event names : [context].[domain].[agg] OR [type].[context].[domain].[agg]
@@ -48,5 +54,7 @@ module.exports = {
 	nextify,
 	asyncParamApiCallback,
 	noop,
+	valueop,
+	isObject,
 	nameRetriever,
 };

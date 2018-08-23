@@ -1,6 +1,8 @@
-# node-cqrs-toolkit
+# cqrs-swissknife
 
-    npm i cqrs-swissknfie
+```sh
+npm i --save cqrs-swissknfie
+```
 
 ### Domains:
 ##### Aggregates:
