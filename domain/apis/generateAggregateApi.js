@@ -12,7 +12,7 @@ const generateEvent = (aggregate, name, payload, metadata) => {
 	return event;
 };
 
-const generateAggregateApi = (aggregate, eventNames, eventEnricher = valueop) => {
+const generateAggregateApi = (aggregate, eventEnricher = valueop) => {
 	const AggregateApi = function AggregateApi(aggregateModel) {
 		this._aggregateModel = aggregateModel;
 		this.apply.__self = this;
@@ -27,9 +27,9 @@ const generateAggregateApi = (aggregate, eventNames, eventEnricher = valueop) =>
 		this._aggregateModel.apply(eventEnricher(evt) || evt);
 	};
 
-	eventNames.forEach((eventName) => {
-		AggregateApi.prototype.apply[eventName] = function applyEvent(payload, metadata) {
-			this.call(this.__self, eventName, payload, metadata);
+	aggregate.events.forEach(({ name }) => {
+		AggregateApi.prototype.apply[name] = function applyEvent(payload, metadata) {
+			this.call(this.__self, name, payload, metadata);
 		};
 	});
 

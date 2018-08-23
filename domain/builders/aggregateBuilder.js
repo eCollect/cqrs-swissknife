@@ -23,7 +23,6 @@ const addCommandToAggregate = (aggregate, {
 
 const addEventToAggregate = (aggregate, { event }) => {
 	aggregate.addEvent(event);
-	return event.name;
 };
 
 module.exports = async (context, aggregateName,
@@ -46,11 +45,11 @@ module.exports = async (context, aggregateName,
 
 	context.addAggregate(aggregate);
 
-	// define eventModels
-	const eventNames = Object.entries(events).map(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
+	// define eventModels - it is important to do so before defining commands so we could generate the aggregateAPI
+	Object.entries(events).map(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
 
 	// generate aggregateApi class
-	const AggregateApi = generateAggregateApi(aggregate, eventNames, eventEnricher);
+	const AggregateApi = generateAggregateApi(aggregate, eventEnricher);
 
 	// define commandModels
 	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, AggregateApi }, definitions, customApiBuilder))));
