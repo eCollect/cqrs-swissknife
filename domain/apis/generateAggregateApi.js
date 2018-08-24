@@ -27,7 +27,7 @@ const generateAggregateApi = (aggregate, eventEnricher = valueop) => {
 	};
 
 	AggregateApi.prototype.apply = function apply(name, payload, metadata) {
-		const evt = generateEvent(aggregate, name, payload, metadata);
+		const evt = generateEvent(aggregate, this._command, name, payload, metadata);
 		this._aggregateModel.apply(eventEnricher(evt, this._aggregateModel, this._command) || evt);
 	};
 
