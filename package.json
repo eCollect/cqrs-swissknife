@@ -19,6 +19,7 @@
   "author": "eCollect AG.",
   "license": "MIT",
   "dependencies": {
-    "dotty": "^0.1.0"
+    "dotty": "^0.1.0",
+    "lodash.merge": "^4.6.1"
   }
 }

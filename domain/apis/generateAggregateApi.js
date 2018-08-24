@@ -1,14 +1,16 @@
 'use strict';
 
 const dotty = require('dotty');
+const merge = require('lodash.merge');
 
 const { valueop } = require('../../utils');
 
-const generateEvent = (aggregate, name, payload, metadata) => {
+const generateEvent = (aggregate, cmd, name, payload, metadata) => {
 	const event = {};
 	dotty.put(event, aggregate.definitions.event.name, name);
 	dotty.put(event, aggregate.definitions.event.payload, payload);
-	dotty.put(event, aggregate.definitions.event.meta, metadata);
+	// merge metadata
+	dotty.put(event, aggregate.definitions.event.meta, merge(metadata, dotty.get(cmd, aggregate.definitions.command.meta)));
 	return event;
 };
 
