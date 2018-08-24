@@ -13,18 +13,20 @@ const generateEvent = (aggregate, name, payload, metadata) => {
 };
 
 const generateAggregateApi = (aggregate, eventEnricher = valueop) => {
-	const AggregateApi = function AggregateApi(aggregateModel) {
+	const AggregateApi = function AggregateApi(aggregateModel, command) {
 		this._aggregateModel = aggregateModel;
+		this._command = command;
+		this.id = this._aggregateModel.id;
 		this.apply.__self = this;
 	};
 
-	AggregateApi.prototype.get = function get(...params) {
-		return this._aggregateModel.get(...params);
+	AggregateApi.prototype.get = function get(attr) {
+		return this._aggregateModel.get(attr);
 	};
 
 	AggregateApi.prototype.apply = function apply(name, payload, metadata) {
 		const evt = generateEvent(aggregate, name, payload, metadata);
-		this._aggregateModel.apply(eventEnricher(evt, this._aggregateModel) || evt);
+		this._aggregateModel.apply(eventEnricher(evt, this._aggregateModel, this._command) || evt);
 	};
 
 	aggregate.events.forEach(({ name }) => {
