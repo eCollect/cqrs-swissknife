@@ -1,5 +1,29 @@
 'use strict';
 
+const promisifyWrappers = {
+	1: fn => function promisified(par1) {
+		return new Promise((resolve, reject) => fn.call(this, par1, (err, ...results) => {
+			if (err)
+				return reject(err);
+			return resolve(results);
+		}));
+	},
+	2: fn => function promisified(par1, par2) {
+		return new Promise((resolve, reject) => fn.call(this, par1, par2, (err, ...results) => {
+			if (err)
+				return reject(err);
+			return resolve(results);
+		}));
+	},
+	3: fn => function promisified(par1, par2, par3) {
+		return new Promise((resolve, reject) => fn.call(this, par1, par2, par3, (err, ...results) => {
+			if (err)
+				return reject(err);
+			return resolve(results);
+		}));
+	},
+};
+
 const nextifyWrappers = {
 	1: fn => (par1, next) => Promise.resolve(fn(par1)).then(() => next(), error => next(error)),
 	2: fn => (par1, par2, next) => Promise.resolve(fn(par1, par2)).then(() => next(), error => next(error)),
@@ -11,6 +35,16 @@ const nextify = (fn, ...params) => {
 
 	if (!asyncFn)
 		throw new Error(`Next callback function with ${params.length} parameters is not implemented yet.`);
+
+	return asyncFn(fn);
+};
+
+const promisify = (fn) => {
+	const length = fn.length - 1;
+	const asyncFn = promisifyWrappers[length];
+
+	if (!asyncFn)
+		throw new Error(`Promisify function with ${length} parameters is not implemented yet.`);
 
 	return asyncFn(fn);
 };
@@ -52,6 +86,7 @@ const nameRetriever = {
 
 module.exports = {
 	nextify,
+	promisify,
 	asyncParamApiCallback,
 	noop,
 	valueop,
