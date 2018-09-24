@@ -32,7 +32,7 @@ const addRuleToAggregate = (aggregate, { rule }) => {
 
 module.exports = async (context, aggregateName,
 	{
-		commands = {}, events = {}, initialState = {}, rules = {}, eventEnricher, idGenerator, options = {},
+		commands = {}, events = {}, initialState = {}, rules = [], eventEnricher, idGenerator, options = {},
 	}, {
 		Aggregate,
 		...definitions
