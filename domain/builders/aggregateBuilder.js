@@ -4,6 +4,7 @@ const { asyncParamApiCallback, noop } = require('../../utils');
 
 const commandBuilder = require('./commandBuilder');
 const eventBuilder = require('./eventBuilder');
+const businessRulesBuilder = require('./businessRulesBuilder');
 
 const generateAggregateApi = require('../apis/generateAggregateApi');
 
@@ -25,9 +26,13 @@ const addEventToAggregate = (aggregate, { event }) => {
 	aggregate.addEvent(event);
 };
 
+const addRuleToAggregate = (aggregate, { rule }) => {
+	aggregate.addBusinessRule(rule);
+};
+
 module.exports = async (context, aggregateName,
 	{
-		commands = {}, events = {}, initialState = {}, eventEnricher, idGenerator, options = {},
+		commands = {}, events = {}, initialState = {}, rules = {}, eventEnricher, idGenerator, options = {},
 	}, {
 		Aggregate,
 		...definitions
@@ -53,6 +58,9 @@ module.exports = async (context, aggregateName,
 
 	// define commandModels
 	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, AggregateApi }, definitions, customApiBuilder))));
+
+	// process buissnessRules
+	businessRulesBuilder({ context, aggregateName, rules }, definitions, customApiBuilder).map(rule => addRuleToAggregate(aggregate, { rule }));
 
 	return aggregate;
 };
