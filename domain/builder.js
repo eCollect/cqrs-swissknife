@@ -3,11 +3,16 @@
 const loader = require('./loader');
 const aggregateBuilder = require('./builders/aggregateBuilder');
 
-const buildErrorBuilders = ({ BusinessRuleError }) => ({
+const buildErrorBuilders = ({ BusinessRuleError, ValidationError }) => ({
 	businessRule(error) {
 		if (error instanceof BusinessRuleError)
 			return error;
 		return new BusinessRuleError(error.message || error, error);
+	},
+	validation(error) {
+		if (error instanceof ValidationError)
+			return error;
+		return new ValidationError(error.message || error, error);
 	},
 });
 

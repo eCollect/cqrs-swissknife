@@ -1,6 +1,6 @@
 'use strict';
 
-const { nextify, asyncParamApiCallback } = require('../../utils');
+const { nextify, asyncParamCustomErrorApiCallback } = require('../../utils');
 
 /*
 const patchCommandHandler = (CommandHandler) => {
@@ -52,6 +52,7 @@ module.exports = async (
 		PreLoadCondition,
 		PreCondition,
 		validatorFunctionBuilder,
+		errorBuilders,
 	},
 	customApiBuilder,
 ) => {
@@ -89,12 +90,12 @@ module.exports = async (
 		}
 
 		if (item.preLoadCondition) {
-			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName] }, asyncParamApiCallback(item.preLoadCondition, customApiBuilder, 'cmd')));
+			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(item.preLoadCondition, errorBuilders.businessRule, customApiBuilder, 'cmd')));
 			continue;
 		}
 
 		if (item.preCondition)
-			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamApiCallback(item.preCondition, customApiBuilder, 'cmd', 'agg')));
+			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(item.preCondition, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
 	}
 
 	return result;
