@@ -5,6 +5,7 @@ const merge = require('lodash.merge');
 
 const { valueop } = require('../../utils');
 
+// direct copy from : https://github.com/adrai/node-cqrs-domain/blob/9b17c73853ec59d451d3101492cb00b16e1ec9e3/lib/definitions/aggregate.js#L70
 const generateEvent = (aggregate, model, eventEnricher, cmd, name, payload, metadata, version = 0) => {
 	const event = {};
 
