@@ -3,6 +3,19 @@
 const loader = require('./loader');
 const aggregateBuilder = require('./builders/aggregateBuilder');
 
+const buildErrorBuilders = ({ BusinessRuleError }) => ({
+	businessRule(error) {
+		if (error instanceof BusinessRuleError)
+			return error;
+		return new BusinessRuleError(error.message || error, error);
+	},
+});
+
+const buildDefinitions = (definitions) => {
+	definitions.errorBuilders = buildErrorBuilders(definitions.errors);
+	return definitions;
+};
+
 const buildContext = async ([contextName, aggregates], { Context, ...definitions }, customApiBuilder) => {
 	const context = new Context({ name: contextName, externallyLoaded: true });
 
@@ -20,7 +33,7 @@ const buildDomain = async (domain, definitions, customApiBuilder) => {
 	const domainTree = {};
 	const domainTreeEntries = Object.entries(domain);
 	for(const entries of domainTreeEntries) // eslint-disable-line
-		domainTree[entries[0]] = await buildContext(entries, definitions, customApiBuilder); // eslint-disable-line
+		domainTree[entries[0]] = await buildContext(entries, buildDefinitions(definitions), customApiBuilder); // eslint-disable-line
 	return domainTree;
 };
 

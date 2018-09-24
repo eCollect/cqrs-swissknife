@@ -1,6 +1,6 @@
 'use strict';
 
-const { asyncParamApiCallback } = require('../../utils');
+const { asyncParamCustomErrorApiCallback } = require('../../utils');
 
 const nameGenerator = (context, aggregateName, index) => `${context}:${aggregateName}:businessRule:${index}`;
 
@@ -33,6 +33,7 @@ module.exports = (
 	},
 	{
 		BusinessRule,
+		errorBuilders,
 	},
 	customApiBuilder,
-) => rulesNormalizer(context, aggregateName, rules).map(rule => new BusinessRule({ name: rule.name, description: rule.description }, asyncParamApiCallback(rule.rule, (cs, ps, e, c) => customApiBuilder(c), 'currentState', 'previousState', 'events', 'command')));
+) => rulesNormalizer(context, aggregateName, rules).map(rule => new BusinessRule({ name: rule.name, description: rule.description }, asyncParamCustomErrorApiCallback(rule.rule, errorBuilders.businessRule, (cs, ps, e, c) => customApiBuilder(c), 'currentState', 'previousState', 'events', 'command')));

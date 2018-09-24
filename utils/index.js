@@ -1,5 +1,19 @@
 'use strict';
 
+const noop = () => ({});
+
+const valueop = v => v;
+
+const isObject = val => val != null && typeof val === 'object' && Array.isArray(val) === false;
+
+const isString = val => typeof val === 'string';
+
+const assureAsync = (fn) => {
+	if (typeof fn.then === 'function')
+		return fn;
+	return async (...params) => fn(...params);
+};
+
 const promisifyWrappers = {
 	1: fn => function promisified(par1) {
 		return new Promise((resolve, reject) => fn.call(this, par1, (err, ...results) => {
@@ -25,9 +39,9 @@ const promisifyWrappers = {
 };
 
 const nextifyWrappers = {
-	1: fn => (par1, next) => Promise.resolve(fn(par1)).then(() => next(), error => next(error)),
-	2: fn => (par1, par2, next) => Promise.resolve(fn(par1, par2)).then(() => next(), error => next(error)),
-	3: fn => (par1, par2, par3, next) => Promise.resolve(fn(par1, par2, par3)).then(() => next(), error => next(error)),
+	1: fn => (par1, next) => fn(par1).then(() => next(), error => next(error)),
+	2: fn => (par1, par2, next) => fn(par1, par2).then(() => next(), error => next(error)),
+	3: fn => (par1, par2, par3, next) => fn(par1, par2, par3).then(() => next(), error => next(error)),
 };
 
 const nextify = (fn, ...params) => {
@@ -36,7 +50,7 @@ const nextify = (fn, ...params) => {
 	if (!asyncFn)
 		throw new Error(`Next callback function with ${params.length} parameters is not implemented yet.`);
 
-	return asyncFn(fn);
+	return asyncFn(assureAsync(fn));
 };
 
 const promisify = (fn) => {
@@ -50,11 +64,12 @@ const promisify = (fn) => {
 };
 
 const asyncParamApiCallbacks = {
-	1: (fn, api) => (par1, callback) => Promise.resolve(fn(par1, api(par1))).then(result => callback(null, result), error => callback(error)),
-	2: (fn, api) => (par1, par2, callback) => Promise.resolve(fn(par1, par2, api(par1, par2))).then(result => callback(null, result), error => callback(error)),
-	3: (fn, api) => (par1, par2, par3, callback) => Promise.resolve(fn(par1, par2, par3, api(par1, par2, par3))).then(result => callback(null, result), error => callback(error)),
-	4: (fn, api) => (par1, par2, par3, par4, callback) => Promise.resolve(fn(par1, par2, par3, par4, api(par1, par2, par3, par4))).then(result => callback(null, result), error => callback(error)),
+	1: (fn, errorBuilder, api) => (par1, callback) => fn(par1, api(par1)).then(result => callback(null, result), error => callback(errorBuilder(error))),
+	2: (fn, errorBuilder, api) => (par1, par2, callback) => fn(par1, par2, api(par1, par2)).then(result => callback(null, result), error => callback(errorBuilder(error))),
+	3: (fn, errorBuilder, api) => (par1, par2, par3, callback) => fn(par1, par2, par3, api(par1, par2, par3)).then(result => callback(null, result), error => callback(errorBuilder(error))),
+	4: (fn, errorBuilder, api) => (par1, par2, par3, par4, callback) => fn(par1, par2, par3, par4, api(par1, par2, par3, par4)).then(result => callback(null, result), error => callback(errorBuilder(error))),
 };
+
 
 const asyncParamApiCallback = (fn, api, ...params) => {
 	const asyncFn = asyncParamApiCallbacks[params.length];
@@ -62,16 +77,17 @@ const asyncParamApiCallback = (fn, api, ...params) => {
 	if (!asyncFn)
 		throw new Error(`Async param callback function with ${params.length} parameters is not implemented yet.`);
 
-	return asyncFn(fn, api);
+	return asyncFn(assureAsync(fn), valueop, api);
 };
 
-const noop = () => ({});
+const asyncParamCustomErrorApiCallback = (fn, errorBuilder = valueop, api, ...params) => {
+	const asyncFn = asyncParamApiCallbacks[params.length];
 
-const valueop = v => v;
+	if (!asyncFn)
+		throw new Error(`Async param callback function with ${params.length} parameters is not implemented yet.`);
 
-const isObject = val => val != null && typeof val === 'object' && Array.isArray(val) === false;
-
-const isString = val => typeof val === 'string';
+	return asyncFn(assureAsync(fn), errorBuilder, api);
+};
 
 const nameRetriever = {
 	/**
@@ -89,6 +105,7 @@ module.exports = {
 	nextify,
 	promisify,
 	asyncParamApiCallback,
+	asyncParamCustomErrorApiCallback,
 	noop,
 	valueop,
 	isObject,
