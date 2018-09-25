@@ -83,6 +83,8 @@ const generateAggregateApi = (aggregate, eventEnricher = valueop) => {
 	};
 
 	AggregateApi.prototype.get = function get(attr) {
+		if (!attr)
+			return this._aggregateModel.attributes:
 		return this._aggregateModel.get(attr);
 	};
 
