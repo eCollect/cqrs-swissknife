@@ -1,6 +1,6 @@
 'use strict';
 
-const { asyncParamApiCallback, nameRetriever } = require('../../utils');
+const { asyncParamApiCallback, nameRetriever, toFlatArray } = require('../../utils');
 
 module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => saga, { Saga }) => Object.entries(reactions).map(([fullName, reaction]) => {
 	const [context, aggregate, name] = nameRetriever.event(fullName);
@@ -15,8 +15,7 @@ module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => 
 		aggregate,
 	};
 
-	if (!Array.isArray(reaction))
-		reaction = [reaction];
+	reaction = toFlatArray(reaction);
 
 	reaction.forEach((item) => {
 		if (!item)

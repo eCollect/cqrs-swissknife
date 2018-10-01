@@ -8,6 +8,14 @@ const isObject = val => val != null && typeof val === 'object' && Array.isArray(
 
 const isString = val => typeof val === 'string';
 
+const flat = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flat(b) : b), []);
+
+const toFlatArray = (workflow) => {
+	if (!Array.isArray(workflow))
+		return [workflow];
+	return flat(workflow);
+};
+
 const assureAsync = (fn) => {
 	if (typeof fn.then === 'function')
 		return fn;
@@ -102,6 +110,8 @@ const nameRetriever = {
 };
 
 module.exports = {
+	toFlatArray,
+	flat,
 	nextify,
 	promisify,
 	asyncParamApiCallback,

@@ -1,6 +1,11 @@
 'use strict';
 
-const { asyncParamApiCallback, noop, nameRetriever } = require('../../utils');
+const {
+	asyncParamApiCallback,
+	noop,
+	nameRetriever,
+	toFlatArray,
+} = require('../../utils');
 
 module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }, customApiBuilder = noop) => {
 	const [context, aggregate, name] = nameRetriever.event(eventFullName);
@@ -15,8 +20,8 @@ module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEve
 		aggregate,
 	};
 
-	if (!Array.isArray(reaction))
-		reaction = [reaction];
+
+	reaction = toFlatArray(reaction);
 
 	reaction.forEach((item) => {
 		// event handler

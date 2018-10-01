@@ -1,6 +1,6 @@
 'use strict';
 
-const { nextify, asyncParamCustomErrorApiCallback } = require('../../utils');
+const { nextify, asyncParamCustomErrorApiCallback, toFlatArray } = require('../../utils');
 
 /*
 const patchCommandHandler = (CommandHandler) => {
@@ -60,9 +60,7 @@ module.exports = async (
 		name: commandName,
 	};
 
-	if (!Array.isArray(command))
-		command = [command];
-
+	command = toFlatArray(command);
 
 	const result = {
 		preLoadConditions: [],
