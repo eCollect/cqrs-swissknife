@@ -5,6 +5,13 @@ const merge = require('lodash.merge');
 
 const { valueop } = require('../../utils');
 
+const deferredEventsSymbol = Symbol('aggregate:deferedEvents');
+const commandSymbol = Symbol('aggregate:command');
+const modeSymbol = Symbol('aggregate:modeSymbol');
+
+const HANDLER_MORE = 'handler';
+const ASYNC_HANDLER_MODE = 'async_handle';
+
 // direct copy from : https://github.com/adrai/node-cqrs-domain/blob/9b17c73853ec59d451d3101492cb00b16e1ec9e3/lib/definitions/aggregate.js#L70
 const generateEvent = (aggregate, model, eventEnricher, cmd, name, payload, metadata, version = 0) => {
 	const event = {};
@@ -75,21 +82,33 @@ const generateEvent = (aggregate, model, eventEnricher, cmd, name, payload, meta
 };
 
 const generateAggregateApi = (aggregate, eventEnricher = valueop) => {
-	const AggregateApi = function AggregateApi(aggregateModel, command) {
+	const AggregateApi = function AggregateApi(aggregateModel, command, mode = HANDLER_MORE) {
 		this._aggregateModel = aggregateModel;
-		this._command = command;
 		this.id = this._aggregateModel.id;
+
+		this[modeSymbol] = mode;
+		this[commandSymbol] = command;
+
 		this.apply.__self = this;
+
+		if (mode === ASYNC_HANDLER_MODE && !this._aggregateModel[deferredEventsSymbol]) {
+			this._aggregateModel[deferredEventsSymbol] = this._aggregateModel[deferredEventsSymbol] || [];
+		} else if (mode === HANDLER_MORE && this._aggregateModel[deferredEventsSymbol]) {
+			this._aggregateModel[deferredEventsSymbol].forEach(params => this.apply(...params));
+			this._aggregateModel[deferredEventsSymbol] = [];
+		}
 	};
 
 	AggregateApi.prototype.get = function get(attr) {
 		if (!attr)
-			return this._aggregateModel.attributes:
+			return this._aggregateModel.attributes;
 		return this._aggregateModel.get(attr);
 	};
 
 	AggregateApi.prototype.apply = function apply(name, payload, metadata) {
-		generateEvent(aggregate, this._aggregateModel, eventEnricher, this._command, name, payload, metadata);
+		if (this[modeSymbol] === HANDLER_MORE)
+			return generateEvent(aggregate, this._aggregateModel, eventEnricher, this[commandSymbol], name, payload, metadata);
+		return this._aggregateModel[deferredEventsSymbol].push([name, payload, metadata]);
 		// this._aggregateModel.apply(eventEnricher(evt, this._aggregateModel, this._command) || evt);
 	};
 
