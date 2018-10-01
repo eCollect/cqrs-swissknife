@@ -1,7 +1,7 @@
 'use strict';
 
-const command = require('./command/index');
-const event = require('./event/index');
+const command = require('./command');
+const event = require('./event');
 
 module.exports = {
 	command,
