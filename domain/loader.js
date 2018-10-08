@@ -3,6 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 
+const { toFlatArray } = require('../utils');
+
+const schemaExtractor = (handler = []) => ({ schema: (toFlatArray(handler).find(item => 'schema' in item) || {}).schema });
+
 const loadAggregate = (filePath, { commands = {}, events = {} }) => {
 	const aggregate = {
 		commands: {},
@@ -11,8 +15,9 @@ const loadAggregate = (filePath, { commands = {}, events = {} }) => {
 	};
 
 	// commands
-	Object.entries(commands).forEach(([commandName]) => {
-		aggregate.commands[commandName] = {};
+	Object.entries(commands).forEach(([commandName, commandHandler]) => {
+		const { schema } = schemaExtractor(commandHandler);
+		aggregate.commands[commandName] = schema ? { schema } : {};
 	});
 
 	// events
