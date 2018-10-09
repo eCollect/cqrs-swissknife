@@ -15,9 +15,11 @@ const loadCollections = (collectionsDirectory) => {
 		if (!fs.statSync(collectionFile).isFile() || path.extname(collectionFile) !== '.js')
 			return;
 
+		const { schema } = require(collectionFile); // eslint-disable-line
 
 		collections[path.basename(collectionName, '.js')] = {
 			path: collectionFile,
+			schema,
 		};
 	});
 
