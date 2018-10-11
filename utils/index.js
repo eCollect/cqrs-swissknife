@@ -1,6 +1,6 @@
 'use strict';
 
-const path = requre('path');
+const path = require('path');
 
 const noop = () => ({});
 
