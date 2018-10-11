@@ -3,6 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { firstFilenamePart } = require('../utils');
+
 // const denormalizerBuilder = require('./denormalizerBuilder');
 
 const loadCollections = (collectionsDirectory) => {
@@ -15,9 +17,14 @@ const loadCollections = (collectionsDirectory) => {
 		if (!fs.statSync(collectionFile).isFile() || path.extname(collectionFile) !== '.js')
 			return;
 
+		const basename = firstFilenamePart(collectionFile);
+
+		if (collections[basename])
+			throw new Error(`Duplicate readmodel: [${basename}] in: ${collectionFile} and ${collections[basename].path}.`);
+
 		const { schema } = require(collectionFile); // eslint-disable-line
 
-		collections[path.basename(collectionName, '.js')] = {
+		collections[basename] = {
 			path: collectionFile,
 			schema,
 		};

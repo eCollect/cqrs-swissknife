@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { toFlatArray } = require('../utils');
+const { toFlatArray, firstFilenamePart } = require('../utils');
 
 const schemaExtractor = (handler = []) => ({ schema: (toFlatArray(handler).find(item => 'schema' in item) || {}).schema });
 
@@ -34,13 +34,15 @@ const loadContext = (contextDirectory) => {
 	fs.readdirSync(contextDirectory).forEach((aggregateName) => {
 		const aggregateFile = path.join(contextDirectory, aggregateName);
 
-
-		if (!fs.statSync(aggregateFile).isFile())
+		if (!fs.statSync(aggregateFile).isFile() || path.extname(aggregateFile) !== '.js')
 			return;
 
-		if (path.extname(aggregateFile) !== '.js') return;
+		const basename = firstFilenamePart(aggregateFile);
 
-		context[path.basename(aggregateName, '.js')] = loadAggregate(aggregateFile, require(aggregateFile)); // eslint-disable-line
+		if (context[basename])
+			throw new Error(`Duplicate aggregator: [${basename}] in: ${aggregateFile} and ${context[basename].path}.`);
+
+		context[basename] = loadAggregate(aggregateFile, require(aggregateFile)); // eslint-disable-line
 	});
 
 	return context;

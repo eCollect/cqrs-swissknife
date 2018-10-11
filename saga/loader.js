@@ -3,6 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { firstFilenamePart } = require('../utils');
+
 const loadCollections = (sagasDirectory) => {
 	const sagas = {};
 
@@ -13,7 +15,12 @@ const loadCollections = (sagasDirectory) => {
 		if (!fs.statSync(sagaFile).isFile() || path.extname(sagaFile) !== '.js')
 			return;
 
-		sagas[path.basename(sagaName, '.js')] = {
+		const basename = firstFilenamePart(sagaFile);
+
+		if (sagas[basename])
+			throw new Error(`Duplicate saga: [${basename}] in: ${sagaFile} and ${sagas[basename].path}.`);
+
+		sagas[basename] = {
 			path: sagaFile,
 		};
 	});

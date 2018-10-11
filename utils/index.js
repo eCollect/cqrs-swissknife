@@ -109,6 +109,8 @@ const nameRetriever = {
 	},
 };
 
+const firstFilenamePart = filename => filename.split('.', 1)[0];
+
 module.exports = {
 	toFlatArray,
 	flat,
@@ -121,4 +123,5 @@ module.exports = {
 	isObject,
 	isString,
 	nameRetriever,
+	firstFilenamePart,
 };
