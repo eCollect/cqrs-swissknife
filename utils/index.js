@@ -1,5 +1,7 @@
 'use strict';
 
+const path = requre('path');
+
 const noop = () => ({});
 
 const valueop = v => v;
@@ -109,7 +111,7 @@ const nameRetriever = {
 	},
 };
 
-const firstFilenamePart = filename => filename.split('.', 1)[0];
+const firstFilenamePart = filename => path.basename(filename).split('.', 1)[0];
 
 module.exports = {
 	toFlatArray,
