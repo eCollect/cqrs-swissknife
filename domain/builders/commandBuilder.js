@@ -72,7 +72,7 @@ module.exports = async (
 	for (const item of command) { // eslint-disable-line no-restricted-syntax
 		// command
 		if (typeof item === 'function') {
-			result.command = new Command(commandSettings, (cmd, agg) => item(cmd, new AggregateApi(agg, cmd, 'handler'), customApiBuilder(cmd)));
+			result.command = new Command(commandSettings, (cmd, agg) => item(cmd, new AggregateApi(agg, cmd, 'handler'), customApiBuilder(cmd, agg)));
 			continue;
 		}
 
@@ -93,7 +93,7 @@ module.exports = async (
 		}
 
 		if (item.preCondition) {
-			const condition = ('mode' in item) ? async (cmd, agg) => item.preCondition(cmd, new AggregateApi(agg, cmd, item.mode)) : item.preCondition;
+			const condition = ('mode' in item) ? async (cmd, agg) => item.preCondition(cmd, new AggregateApi(agg, cmd, item.mode), customApiBuilder(cmd, agg)) : item.preCondition;
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(condition, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
 		}
 	}
