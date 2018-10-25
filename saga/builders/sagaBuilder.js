@@ -35,7 +35,7 @@ module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => 
 		}
 
 		if (typeof item === 'function') {
-			sagaFunction = (event, saga, callback) => Promise.resolve(item(event, saga, customApiBuilder(event, saga))).then(() => saga.commit(callback));
+			sagaFunction = (event, saga, callback) => Promise.resolve(item(event, saga, customApiBuilder(event, saga))).then(() => saga.commit(callback), callback);
 			return null;
 		}
 		return null;
