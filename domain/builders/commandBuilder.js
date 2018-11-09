@@ -67,7 +67,7 @@ module.exports = async (
 		preConditions: [],
 		command: null,
 		validator: null,
-		businessRules: [],
+		commandBusinessRules: [],
 	};
 
 	for (const item of command) { // eslint-disable-line no-restricted-syntax
