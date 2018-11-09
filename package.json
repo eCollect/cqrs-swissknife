@@ -1,6 +1,6 @@
 {
   "name": "cqrs-swissknife",
-  "version": "0.4.43",
+  "version": "0.4.44",
   "description": "",
   "main": "index.js",
   "private": false,
