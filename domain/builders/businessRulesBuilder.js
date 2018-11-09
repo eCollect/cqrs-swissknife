@@ -20,7 +20,7 @@ const ruleNormalizer = (context, aggregateName, index, rule) => {
 };
 
 const rulesNormalizer = (context, aggregateName, commandBussinessRules, rules) => {
-	return [...commandBussinessRules, ...toFlatArray(rules)].map((rule, index) => ruleNormalizer(context, aggregateName, index, rule));
+	return [...toFlatArray(rules), ...commandBussinessRules].map((rule, index) => ruleNormalizer(context, aggregateName, index, rule));
 };
 
 module.exports = (

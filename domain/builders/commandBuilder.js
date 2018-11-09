@@ -1,5 +1,7 @@
 'use strict';
 
+const dotty = require('dotty');
+
 const { nextify, asyncParamCustomErrorApiCallback, toFlatArray } = require('../../utils');
 
 /*
@@ -98,8 +100,11 @@ module.exports = async (
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(condition, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
 		}
 
-		if (item.businessRule)
-			result.businessRules.push(item.rule);
+		if (item.businessRule) {
+			if (typeof item.businessRule !== 'function')
+				throw new Error('Invalid command businnes rule. Should be a function');
+			result.businessRules.push(item.businessRule);
+		}
 
 	}
 
