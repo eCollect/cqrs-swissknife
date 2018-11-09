@@ -98,11 +98,8 @@ module.exports = async (
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(condition, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
 		}
 
-		if (item.businessRule) {
-			if (typeof item.businessRule !== 'function')
-				throw new Error('Invalid command businnes rule. Should be a function');
-			result.businessRules.push(item.businessRule);
-		}
+		if (item.commandBusinessRule)
+			result.commandBusinessRules.push(item.commandBusinessRule);
 
 	}
 

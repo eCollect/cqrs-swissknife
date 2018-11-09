@@ -13,7 +13,7 @@ const generateAggregateApi = require('../apis/generateAggregateApi');
 const addCommandToAggregate = (aggregate, {
 	preLoadConditions,
 	preConditions,
-	businessRules,
+	commandBusinessRules,
 	validator,
 	command,
 }) => {
@@ -24,7 +24,7 @@ const addCommandToAggregate = (aggregate, {
 	preLoadConditions.forEach(cnd => command.addPreLoadCondition(cnd));
 	preConditions.forEach(cnd => command.addPreCondition(cnd));
 
-	return businessRules.map((f,i) => ({
+	return commandBusinessRules.map((f,i) => ({
 		name: `${aggregate.context}:${aggregate.name}:businessRule:${command.name}:${0}`,
 		rule(current, previous, events, cmd) {
 			if (dotty.get(cmd, command.definitions.command.name) === command.name)

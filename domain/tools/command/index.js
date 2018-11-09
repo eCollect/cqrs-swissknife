@@ -17,6 +17,12 @@ const preCondition = (condition) => {
 	return { preCondition: condition };
 };
 
+const commandBusinessRule = (rule) => {
+	if (!rule || typeof rule !== 'function')
+		throw new Error('Rule missing or not a function.');
+
+	return { commandBusinessRule: condition };
+};
 
 const only = {
 	ifExists: sharedOnly.ifExists,
@@ -35,6 +41,9 @@ const only = {
 	ifState(condition) { // pre-condition
 		return preCondition(condition);
 	},
+	after(rule) { // businessRule
+		return commandBusinessRule(rule)
+	}
 };
 
 module.exports = {
