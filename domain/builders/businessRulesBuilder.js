@@ -1,6 +1,6 @@
 'use strict';
 
-const { asyncParamCustomErrorApiCallback } = require('../../utils');
+const { asyncParamCustomErrorApiCallback, toFlatArray } = require('../../utils');
 
 const nameGenerator = (context, aggregateName, index) => `${context}:${aggregateName}:businessRule:${index}`;
 
@@ -19,10 +19,8 @@ const ruleNormalizer = (context, aggregateName, index, rule) => {
 	return rule;
 };
 
-const rulesNormalizer = (context, aggregateName, rules) => {
-	if (!Array.isArray(rules))
-		rules = [rules];
-	return rules.map((rule, index) => ruleNormalizer(context, aggregateName, index, rule));
+const rulesNormalizer = (context, aggregateName, commandBussinessRules, rules) => {
+	return [...commandBussinessRules, ...toFlatArray(rules)].map((rule, index) => ruleNormalizer(context, aggregateName, index, rule));
 };
 
 module.exports = (
@@ -30,10 +28,11 @@ module.exports = (
 		context,
 		aggregateName,
 		rules,
+		commandBussinessRules,
 	},
 	{
 		BusinessRule,
 		errorBuilders,
 	},
 	customApiBuilder,
-) => rulesNormalizer(context, aggregateName, rules).map(rule => new BusinessRule({ name: rule.name, description: rule.description }, asyncParamCustomErrorApiCallback(rule.rule, errorBuilders.businessRule, (cs, ps, e, c) => customApiBuilder(c), 'currentState', 'previousState', 'events', 'command')));
+) => rulesNormalizer(context, aggregateName, commandBussinessRules, rules).map(rule => new BusinessRule({ name: rule.name, description: rule.description }, asyncParamCustomErrorApiCallback(rule.rule, errorBuilders.businessRule, (cs, ps, e, c) => customApiBuilder(c), 'currentState', 'previousState', 'events', 'command')));

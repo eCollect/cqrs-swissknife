@@ -67,6 +67,7 @@ module.exports = async (
 		preConditions: [],
 		command: null,
 		validator: null,
+		businessRules: [],
 	};
 
 	for (const item of command) { // eslint-disable-line no-restricted-syntax
@@ -96,6 +97,10 @@ module.exports = async (
 			const condition = ('mode' in item) ? async (cmd, agg) => item.preCondition(cmd, new AggregateApi(agg, cmd, item.mode), customApiBuilder(cmd, agg)) : item.preCondition;
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(condition, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
 		}
+
+		if (item.businessRule)
+			result.businessRules.push(item.rule);
+
 	}
 
 	return result;

@@ -1,6 +1,6 @@
 'use strict';
 
-const { asyncParamApiCallback, noop } = require('../../utils');
+const { asyncParamApiCallback, noop, toFlatArray } = require('../../utils');
 
 const commandBuilder = require('./commandBuilder');
 const eventBuilder = require('./eventBuilder');
@@ -13,6 +13,7 @@ const addCommandToAggregate = (aggregate, {
 	preConditions,
 	validator,
 	command,
+	businessRules: [],
 }) => {
 	if (validator)
 		command.defineValidation(validator);
@@ -20,6 +21,8 @@ const addCommandToAggregate = (aggregate, {
 	aggregate.addCommand(command);
 	preLoadConditions.forEach(cnd => command.addPreLoadCondition(cnd));
 	preConditions.forEach(cnd => command.addPreCondition(cnd));
+
+	return businessRules;
 };
 
 const addEventToAggregate = (aggregate, { event }) => {
@@ -57,10 +60,10 @@ module.exports = async (context, aggregateName,
 	const AggregateApi = generateAggregateApi(aggregate, eventEnricher);
 
 	// define commandModels
-	await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, AggregateApi }, definitions, customApiBuilder))));
+	const commandBussinessRules = toFlatArray(await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, AggregateApi }, definitions, customApiBuilder)))));
 
 	// process buissnessRules
-	businessRulesBuilder({ context, aggregateName, rules }, definitions, customApiBuilder).map(rule => addRuleToAggregate(aggregate, { rule }));
+	businessRulesBuilder({ context, aggregateName, commandBussinessRules, rules }, definitions, customApiBuilder).map(rule => addRuleToAggregate(aggregate, { rule }));
 
 	return aggregate;
 };
