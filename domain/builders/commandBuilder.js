@@ -1,7 +1,5 @@
 'use strict';
 
-const dotty = require('dotty');
-
 const { nextify, asyncParamCustomErrorApiCallback, toFlatArray } = require('../../utils');
 
 /*

@@ -1,5 +1,7 @@
 'use strict';
 
+const dotty = require('dotty');
+
 const { asyncParamApiCallback, noop, toFlatArray } = require('../../utils');
 
 const commandBuilder = require('./commandBuilder');
@@ -22,11 +24,14 @@ const addCommandToAggregate = (aggregate, {
 	preLoadConditions.forEach(cnd => command.addPreLoadCondition(cnd));
 	preConditions.forEach(cnd => command.addPreCondition(cnd));
 
-	return businessRules.map(f => (current, previous, events, cmd) => {
-		if (dotty.get(cmd, command.definitions.command.name) === command.name)
-			return f(current, previous, events, cmd)
-		return;
-	});
+	return businessRules.map((f,i) => ({
+		name: `${aggregate.context}:${aggregate.name}:businessRule:${command.name}:${0}`,
+		rule(current, previous, events, cmd) {
+			if (dotty.get(cmd, command.definitions.command.name) === command.name)
+				return f(current, previous, events, cmd)
+			return;
+		},
+	}));
 };
 
 const addEventToAggregate = (aggregate, { event }) => {
