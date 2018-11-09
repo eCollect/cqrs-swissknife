@@ -17,11 +17,11 @@ const preCondition = (condition) => {
 	return { preCondition: condition };
 };
 
-const commandBusinessRule = (rule) => {
-	if (!rule || typeof rule !== 'function')
+const commandBusinessRule = (commandBusinessRule) => {
+	if (!commandBusinessRule || typeof commandBusinessRule !== 'function')
 		throw new Error('Rule missing or not a function.');
 
-	return { commandBusinessRule: condition };
+	return { commandBusinessRule };
 };
 
 const only = {
