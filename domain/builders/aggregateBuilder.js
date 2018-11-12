@@ -26,9 +26,9 @@ const addCommandToAggregate = (aggregate, {
 
 	return commandBusinessRules.map((f,i) => ({
 		name: `${aggregate.context}:${aggregate.name}:businessRule:${command.name}:${0}`,
-		rule(current, previous, events, cmd) {
+		rule(current, previous, events, cmd, api) {
 			if (dotty.get(cmd, command.definitions.command.name) === command.name)
-				return f(current, previous, events, cmd)
+				return f(current, previous, events, cmd, api)
 			return;
 		},
 	}));
