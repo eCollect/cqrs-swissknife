@@ -7,10 +7,25 @@ const {
 	toFlatArray,
 } = require('../../utils');
 
+const compositeHandler = handlers => async (event, vm, api) => {
+	for (const handler of handlers)
+		await handler(event, vm, api);
+}
+
+const buildViewModelFunction = (viewModelFunctions) => {
+	if (!viewModelFunctions.length)
+		throw new Error(`No view model function specified for event ${eventFullName}`);
+
+	if (viewModelFunctions.length === 1)
+		return viewModelFunctions[0];
+
+	return compositeHandler(viewModelFunctions);
+}
+
 module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }, customApiBuilder = noop) => {
 	const [context, aggregate, name] = nameRetriever.event(eventFullName);
 
-	let viewModelFunction = null;
+	let viewModelFunctions = [];
 	let eventExtenderFunction;
 	let preEventExtenderFunction;
 
@@ -26,7 +41,7 @@ module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEve
 	reaction.forEach((item) => {
 		// event handler
 		if (typeof item === 'function') {
-			viewModelFunction = asyncParamApiCallback(item, customApiBuilder, 'event', 'vm');
+			viewModelFunctions.push(item); //  asyncParamApiCallback(item, customApiBuilder, 'event', 'vm'));
 			return;
 		}
 
@@ -54,12 +69,10 @@ module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEve
 			Object.assign(modelSettings, item.settings);
 	});
 
-	if (!viewModelFunction)
-		throw new Error(`No view model function specified for event ${eventFullName}`);
+	const viewModelFunction = asyncParamApiCallback(buildViewModelFunction(viewModelFunctions), customApiBuilder, 'event', 'vm');
 
 	if (!identifier)
 		throw new Error(`No identity specified for event ${eventFullName}`);
-
 
 	if (typeof identifier === 'string')
 		modelSettings.id = identifier;
