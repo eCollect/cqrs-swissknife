@@ -45,7 +45,7 @@ module.exports = async (
 	{
 		commandName,
 		command,
-		AggregateApi,
+		aggregateApi,
 	},
 	{
 		Command,
@@ -73,7 +73,7 @@ module.exports = async (
 	for (const item of command) { // eslint-disable-line no-restricted-syntax
 		// command
 		if (typeof item === 'function') {
-			result.command = new Command(commandSettings, (cmd, agg) => item(cmd, new AggregateApi(agg, cmd, 'handler'), customApiBuilder(cmd, agg)));
+			result.command = new Command(commandSettings, (cmd, agg) => item(cmd, aggregateApi(agg, cmd, 'handler'), customApiBuilder(cmd, agg)));
 			continue;
 		}
 
@@ -94,13 +94,12 @@ module.exports = async (
 		}
 
 		if (item.preCondition) {
-			const condition = ('mode' in item) ? async (cmd, agg) => item.preCondition(cmd, new AggregateApi(agg, cmd, item.mode), customApiBuilder(cmd, agg)) : item.preCondition;
+			const condition = ('mode' in item) ? async (cmd, agg, api) => item.preCondition(cmd, aggregateApi(agg, cmd, item.mode), api) : item.preCondition;
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(condition, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
 		}
 
 		if (item.commandBusinessRule)
 			result.commandBusinessRules.push(item.commandBusinessRule);
-
 	}
 
 	return result;

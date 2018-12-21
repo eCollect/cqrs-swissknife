@@ -24,12 +24,12 @@ const addCommandToAggregate = (aggregate, {
 	preLoadConditions.forEach(cnd => command.addPreLoadCondition(cnd));
 	preConditions.forEach(cnd => command.addPreCondition(cnd));
 
-	return commandBusinessRules.map((f,i) => ({
-		name: `${aggregate.context}:${aggregate.name}:businessRule:${command.name}:${0}`,
+	return commandBusinessRules.map((f, i) => ({
+		name: `${aggregate.context}:${aggregate.name}:businessRule:${command.name}:${i}`,
 		rule(current, previous, events, cmd, api) {
 			if (dotty.get(cmd, command.definitions.command.name) === command.name)
-				return f(current, previous, events, cmd, api)
-			return;
+				return f(current, previous, events, cmd, api);
+			return null;
 		},
 	}));
 };
@@ -66,13 +66,15 @@ module.exports = async (context, aggregateName,
 	Object.entries(events).map(([eventName, event]) => addEventToAggregate(aggregate, eventBuilder({ eventName, event }, definitions)));
 
 	// generate aggregateApi class
-	const AggregateApi = generateAggregateApi(aggregate, eventEnricher);
+	const aggregateApi = generateAggregateApi(aggregate, eventEnricher);
 
 	// define commandModels
-	const commandBussinessRules = toFlatArray(await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, AggregateApi }, definitions, customApiBuilder)))));
+	const commandBussinessRules = toFlatArray(await Promise.all(Object.entries(commands).map(async ([commandName, command]) => addCommandToAggregate(aggregate, await commandBuilder({ commandName, command, aggregateApi }, definitions, customApiBuilder)))));
 
 	// process buissnessRules
-	businessRulesBuilder({ context, aggregateName, commandBussinessRules, rules }, definitions, customApiBuilder).map(rule => addRuleToAggregate(aggregate, { rule }));
+	businessRulesBuilder({
+		context, aggregateName, commandBussinessRules, rules,
+	}, definitions, customApiBuilder).map(rule => addRuleToAggregate(aggregate, { rule }));
 
 	return aggregate;
 };
