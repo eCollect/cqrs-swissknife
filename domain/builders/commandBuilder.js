@@ -67,8 +67,8 @@ module.exports = async (
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(condition, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
 		}
 
-		if (item.commandBusinessRule)
-			result.commandBusinessRules.push(item.commandBusinessRule);
+		if (item.businessRule)
+			result.commandBusinessRules.push(item.businessRule);
 	}
 
 	return result;
