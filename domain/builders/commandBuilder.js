@@ -1,45 +1,8 @@
 'use strict';
 
-const { nextify, asyncParamCustomErrorApiCallback, toFlatArray } = require('../../utils');
-
-/*
-const patchCommandHandler = (CommandHandler) => {
-	if (CommandHandler.__patched)
-		return;
-
-	CommandHandler.prototype.asycValidateCommand = promisify(CommandHandler.prototype.validateCommand);
-	CommandHandler.prototype.asycLoadAggregate = promisify(CommandHandler.prototype.loadAggregate);
-	CommandHandler.prototype.asyncCheckPreLoadConditions = promisify(CommandHandler.prototype.checkPreLoadConditions);
-	CommandHandler.prototype.asyncCommit = promisify(CommandHandler.prototype.commit);
-
-	CommandHandler.__patched = true;
-
-}
-
-const buildCommandHandler = (item, AggregateApi, customApiBuilder) => async (aggId, cmd, commandHandler) => {
-	// validate Command
-	await commandHandler.asycValidateCommand(cmd);
-	// check preload condifitions
-	await commandHandler.asyncCheckPreLoadConditions(cmd);
-	// TODO: Lock aggregate
-
-	const [ aggregate, streams ] = await commandHandler.asycLoadAggregate(cmd, aggId);
-
-	var err = commandHandler.verifyAggregate(aggregate, cmd);
-	if (err)
-		throw err;
-
-	await Promise.resolve(item(cmd, new AggregateApi(aggregate, cmd), customApiBuilder(cmd)));
-
-	// TODO: Check lock aggregate
-
-	// dispatch
-	const [ eventsToDisaptch ] = await commandHandler.asyncCommit(aggregate, streams);
-
-	// TODO: Check unlock aggregate
-	return eventsToDisaptch;
-};
-*/
+const {
+	nextify, asyncParamCustomErrorApiCallback, toFlatArray, noop,
+} = require('../../utils');
 
 module.exports = async (
 	{
@@ -73,7 +36,9 @@ module.exports = async (
 	for (const item of command) { // eslint-disable-line no-restricted-syntax
 		// command
 		if (typeof item === 'function') {
-			result.command = new Command(commandSettings, (cmd, agg) => item(cmd, aggregateApi(agg, cmd, 'handler'), customApiBuilder(cmd, agg)));
+			const middleware = async (cmd, agg, api) => item(cmd, aggregateApi(agg, cmd), api); // : item.preCondition;
+			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(middleware, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
+			result.command = result.command || new Command(commandSettings, noop);
 			continue;
 		}
 
@@ -89,12 +54,16 @@ module.exports = async (
 		}
 
 		if (item.preLoadCondition) {
+			if (result.command)
+				throw new Error('PreLoadConditions may be defined only before command handlers');
 			result.preLoadConditions.push(new PreLoadCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(item.preLoadCondition, errorBuilders.businessRule, customApiBuilder, 'cmd')));
 			continue;
 		}
 
 		if (item.preCondition) {
-			const condition = ('mode' in item) ? async (cmd, agg, api) => item.preCondition(cmd, aggregateApi(agg, cmd, item.mode), api) : item.preCondition;
+			if (result.command)
+				throw new Error('PreConditions may be defined only before command handlers');
+			const condition = async (cmd, agg, api) => item.preCondition(cmd, aggregateApi(agg, cmd), api);
 			result.preConditions.push(new PreCondition({ name: [commandName] }, asyncParamCustomErrorApiCallback(condition, errorBuilders.businessRule, customApiBuilder, 'cmd', 'agg')));
 		}
 
