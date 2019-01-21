@@ -8,6 +8,7 @@ module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => 
 	let identifier = identity[fullName];
 	let sagaFunction;
 	let shouldHandle;
+	let shouldHandleEvent;
 
 	const sagaSettings = {
 		name,
@@ -34,6 +35,11 @@ module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => 
 			return null;
 		}
 
+		if (item.shouldHandleEvent) {
+			shouldHandleEvent = asyncParamApiCallback(item.shouldHandleEvent, customApiBuilder, 'evt', 'saga');
+			return null;
+		}
+
 		if (typeof item === 'function') {
 			sagaFunction = (event, saga, callback) => Promise.resolve(item(event, saga, customApiBuilder(event, saga))).then(() => saga.commit(callback), callback);
 			return null;
@@ -54,6 +60,9 @@ module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => 
 
 	if (shouldHandle)
 		sagaDefinition.defineShouldHandle(shouldHandle);
+
+	if (shouldHandleEvent)
+		sagaDefinition.defineShouldHandle(shouldHandleEvent);
 
 	return sagaDefinition;
 });
