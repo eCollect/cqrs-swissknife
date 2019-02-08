@@ -10,22 +10,22 @@ const {
 const compositeHandler = handlers => async (event, vm, api) => {
 	for (const handler of handlers)
 		await handler(event, vm, api);
-}
+};
 
 const buildViewModelFunction = (viewModelFunctions) => {
 	if (!viewModelFunctions.length)
-		throw new Error(`No view model function specified for event ${eventFullName}`);
+		throw new Error(`No view model function specified for event!`);
 
 	if (viewModelFunctions.length === 1)
 		return viewModelFunctions[0];
 
 	return compositeHandler(viewModelFunctions);
-}
+};
 
 module.exports = ({ eventFullName, reaction, identifier }, { ViewBuilder, PreEventExtender, EventExtender }, customApiBuilder = noop) => {
 	const [context, aggregate, name] = nameRetriever.event(eventFullName);
 
-	let viewModelFunctions = [];
+	const viewModelFunctions = [];
 	let eventExtenderFunction;
 	let preEventExtenderFunction;
 
