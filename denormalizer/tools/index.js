@@ -6,7 +6,7 @@ const shouldHandle = (fn) => {
 	if (!fn || typeof fn !== 'function')
 		throw new Error('Condition is missing or not a function.');
 
-	return fn.length === 1 ? { shouldHandleEvent: fn } : { shouldHandle: fn };
+	return settings(fn.length === 1 ? { shouldHandleEvent: fn } : { shouldHandle: fn });
 };
 
 const only = {
