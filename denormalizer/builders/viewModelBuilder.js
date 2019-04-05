@@ -8,13 +8,15 @@ const {
 } = require('../../utils');
 
 const compositeHandler = handlers => async (event, vm, api) => {
+	// eslint-disable-next-line no-restricted-syntax
 	for (const handler of handlers)
+		// eslint-disable-next-line no-await-in-loop
 		await handler(event, vm, api);
 };
 
 const buildViewModelFunction = (viewModelFunctions) => {
 	if (!viewModelFunctions.length)
-		throw new Error(`No view model function specified for event!`);
+		throw new Error('No view model function specified for event!');
 
 	if (viewModelFunctions.length === 1)
 		return viewModelFunctions[0];
