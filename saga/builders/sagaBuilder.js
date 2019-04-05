@@ -36,7 +36,7 @@ module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => 
 		}
 
 		if (item.shouldHandleEvent) {
-			shouldHandleEvent = asyncParamApiCallback(item.shouldHandleEvent, customApiBuilder, 'evt', 'saga');
+			shouldHandleEvent = asyncParamApiCallback(item.shouldHandleEvent, customApiBuilder, 'evt');
 			return null;
 		}
 
