@@ -62,7 +62,7 @@ module.exports = ({ reactions = {}, identity = {} }, customApiBuilder = saga => 
 		sagaDefinition.defineShouldHandle(shouldHandle);
 
 	if (shouldHandleEvent)
-		sagaDefinition.defineShouldHandle(shouldHandleEvent);
+		sagaDefinition.defineShouldHandleEvent(shouldHandleEvent);
 
 	return sagaDefinition;
 });
